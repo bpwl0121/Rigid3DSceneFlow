@@ -350,9 +350,9 @@ class StereoKITTI_ME(MELidarDataset):
 class SemanticKITTI_ME(MELidarDataset):
     # 3D Match dataset all files
     DATA_FILES = {
-        'train': './configs/datasets/semantic_kitti/train.txt',
-        'val': './configs/datasets/semantic_kitti/val.txt',
-        'test': './configs/datasets/semantic_kitti/val.txt'
+        'train': './configs/datasets/semantic_kitti/sub_train_942.txt',
+        'val': './configs/datasets/semantic_kitti/sub_val_217.txt',
+        'test': './configs/datasets/semantic_kitti/sub_val_217.txt'
     }
 
 class LidarKITTI_ME(MELidarDataset):

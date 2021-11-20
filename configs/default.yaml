@@ -17,9 +17,14 @@ train:
   acc_iter_size: 1 # Number of iterration to accumulate the gradients before optimizer step (can be used if the gpu memory is too low)
   num_workers: 6 # Number of workers used for the data loader
   max_epoch: 5000 # Max number of training epochs
-  stat_interval: 250 # Interval at which the stats are printed out and saved for the tensorboard (if positive it denotes iteration if negative epochs)
-  chkpt_interval: 500 # Interval at which the model is saved (if positive it denotes iteration if negative epochs)
-  val_interval: 2000 # Interval at which the validation is performed (if positive it denotes iteration if negative epochs)
+  
+  ############################################
+  # All of these numbers are to be divided by 20, as we only use 5% of the data 
+  stat_interval: 12 # Interval at which the stats are printed out and saved for the tensorboard (if positive it denotes iteration if negative epochs)
+  chkpt_interval: 25 # Interval at which the model is saved (if positive it denotes iteration if negative epochs)
+  val_interval: 100 # Interval at which the validation is performed (if positive it denotes iteration if negative epochs)
+  #############################################
+  
   weighted_seg_loss: True
 
 val:
@@ -43,6 +48,7 @@ loss:
 optimizer:
   alg: Adam # Which optimizer to use
   learning_rate: 0.001 # Initial learning rate
+  # without weight decay?
   weight_decay: 0.0 # Weight decay weight
   momentum: 0.8 #Momentum
   scheduler: ExponentialLR
