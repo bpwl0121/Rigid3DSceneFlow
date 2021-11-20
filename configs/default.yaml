@@ -16,13 +16,15 @@ train:
   batch_size: 8 # Training batch size
   acc_iter_size: 1 # Number of iterration to accumulate the gradients before optimizer step (can be used if the gpu memory is too low)
   num_workers: 6 # Number of workers used for the data loader
-  max_epoch: 5000 # Max number of training epochs
+
+  # from the paper:  40 epochs (or until convergence
+  max_epoch: 40 # Max number of training epochs
   
   ############################################
-  # All of these numbers are to be divided by 20, as we only use 5% of the data 
-  stat_interval: 12 # Interval at which the stats are printed out and saved for the tensorboard (if positive it denotes iteration if negative epochs)
-  chkpt_interval: 25 # Interval at which the model is saved (if positive it denotes iteration if negative epochs)
-  val_interval: 100 # Interval at which the validation is performed (if positive it denotes iteration if negative epochs)
+  # we only use 5% of the data, so I change the logic form iteration to epoch counter
+  stat_interval: 20 # Interval at which the stats are printed out and saved for the tensorboard (if positive it denotes iteration if negative epochs)
+  chkpt_interval: -1 # Interval at which the model is saved (if positive it denotes iteration if negative epochs)
+  val_interval: -1 # Interval at which the validation is performed (if positive it denotes iteration if negative epochs)
   #############################################
   
   weighted_seg_loss: True
