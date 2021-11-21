@@ -1,0 +1,76 @@
+data:
+  augment_data: false
+  dataset: LidarKITTI_ME
+  input_features: absolute_coords
+  n_classes: 2
+  only_near_points: true
+  remove_ground: true
+  root: ./data/lidar_kitti/
+loss:
+  background_loss: false
+  bg_loss_w: 1.0
+  cd_loss_w: 0.5
+  ego_loss: false
+  ego_loss_w: 1.0
+  fg_loss_w: 1.0
+  flow_loss: false
+  flow_loss_w: 1.0
+  foreground_loss: false
+  inlier_loss_w: 0.005
+  rigid_loss_w: 1.0
+method:
+  backbone: ME
+  clustering: true
+  ego_motion: true
+  flow: true
+  semantic: true
+metrics:
+  ego_motion: true
+  flow: true
+  semantic: false
+misc:
+  log_dir: ./logs/
+  num_points: 8192
+  run_mode: test
+  trainer: FlowTrainer
+  use_gpu: true
+  voxel_size: 0.1
+network:
+  add_slack: true
+  cluster_metric: euclidean
+  ego_motion_points: 1024
+  eps_dbscan: 0.75
+  feature_dim: 64
+  in_kernel_size: 7
+  min_p_cluster: 30
+  min_samples_dbscan: 5
+  norm_type: IN
+  normalize_features: true
+  pretrained_path: logs/logs_SemanticKITTI_ME/full_scratch_all_loss/model_best.pt
+  sinkhorn_iter: 3
+  use_pretrained: true
+optimizer:
+  alg: Adam
+  exp_gamma: 0.98
+  learning_rate: 0.001
+  momentum: 0.8
+  scheduler: ExponentialLR
+  weight_decay: 0.0
+test:
+  batch_size: 1
+  num_workers: 1
+  postprocess_clusters: true
+  postprocess_ego: true
+  results_dir: ./eval_results/lidar_kitti/
+train:
+  acc_iter_size: 1
+  batch_size: 8
+  chkpt_interval: 500
+  max_epoch: 5000
+  num_workers: 6
+  stat_interval: 250
+  val_interval: 2000
+  weighted_seg_loss: true
+val:
+  batch_size: 8
+  num_workers: 6
