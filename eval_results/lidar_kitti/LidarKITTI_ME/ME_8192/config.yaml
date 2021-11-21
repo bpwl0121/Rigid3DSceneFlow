@@ -46,7 +46,7 @@ network:
   min_samples_dbscan: 5
   norm_type: IN
   normalize_features: true
-  pretrained_path: logs/logs_SemanticKITTI_ME/full_scratch_all_loss/model_best.pt
+  pretrained_path: logs/logs_SemanticKITTI_ME/21_11_21-12_20_18_880120__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_best.pt
   sinkhorn_iter: 3
   use_pretrained: true
 optimizer:
@@ -64,13 +64,13 @@ test:
   results_dir: ./eval_results/lidar_kitti/
 train:
   acc_iter_size: 1
-  batch_size: 8
-  chkpt_interval: 500
-  max_epoch: 5000
+  batch_size: 6
+  chkpt_interval: -1
+  max_epoch: 40
   num_workers: 6
-  stat_interval: 250
-  val_interval: 2000
+  stat_interval: 20
+  val_interval: -1
   weighted_seg_loss: true
 val:
-  batch_size: 8
+  batch_size: 6
   num_workers: 6
