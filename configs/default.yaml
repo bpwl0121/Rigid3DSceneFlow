@@ -17,8 +17,9 @@ train:
   acc_iter_size: 1 # Number of iterration to accumulate the gradients before optimizer step (can be used if the gpu memory is too low)
   num_workers: 6 # Number of workers used for the data loader
 
-  # from the paper:  40 epochs (or until convergence
-  max_epoch: 40 # Max number of training epochs
+  # from the paper:  40 epochs 
+  # and the epoch counter beginns with -1, so 39 means 40 epoch
+  max_epoch: 39 # Max number of training epochs
   
   ############################################
   # we only use 5% of the data, so I change the logic form iteration to epoch counter
