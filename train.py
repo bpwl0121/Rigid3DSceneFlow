@@ -227,7 +227,7 @@ def main(cfg, config_name):
         scheduler.step()
 
     # Quit after the maximum number of epochs is reached
-    logger.info('Training completed after {} Epochs ({} it) with best val metric ({})={}'.format(epoch_it, it, model_selection_metric, metric_val_best))
+    logger.info('Training completed after {} Epochs ({} it) with best val metric (total_loss)={}'.format(epoch_it, it, metric_val_best))
 
 
 if __name__ == "__main__":
