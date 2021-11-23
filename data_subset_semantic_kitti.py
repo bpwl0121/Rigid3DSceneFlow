@@ -27,7 +27,7 @@ def copy_subdataset():
     input_root="./data/semantic_kitti/"
     target_root="../sub_dataset/"
     lines_train = open(
-        r'configs\datasets\semantic_kitti\sub_train_{NUM_TRAIN}.txt'.format(NUM_TRAIN=NUM_TRAIN)).read().splitlines()
+        'configs/datasets/semantic_kitti/sub_train_{NUM_TRAIN}.txt'.format(NUM_TRAIN=NUM_TRAIN)).read().splitlines()
     for line in lines_train:
         input_file_path=os.path.join(input_root,line)
         ouput_file_path=os.path.join(target_root,line)
