@@ -13,8 +13,8 @@ data:
   only_near_points: True # Only consider near points (less than 35m away) [Used in all scene flow algorithms]
 
 train:
-  batch_size: 4 # Training batch size
-  acc_iter_size: 2 # Number of iterration to accumulate the gradients before optimizer step (can be used if the gpu memory is too low)
+  batch_size: 6 # Training batch size
+  acc_iter_size: 1 # Number of iterration to accumulate the gradients before optimizer step (can be used if the gpu memory is too low)
   num_workers: 6 # Number of workers used for the data loader
 
   # from the paper:  40 epochs 
@@ -23,6 +23,7 @@ train:
   
   ############################################
   # we only use 5% of the data, so I change the logic form iteration to epoch counter
+  # These intervals do not work in the same way as the following comments 
   stat_interval: 20 # Interval at which the stats are printed out and saved for the tensorboard (if positive it denotes iteration if negative epochs)
   chkpt_interval: -1 # Interval at which the model is saved (if positive it denotes iteration if negative epochs)
   val_interval: -1 # Interval at which the validation is performed (if positive it denotes iteration if negative epochs)
@@ -31,7 +32,7 @@ train:
   weighted_seg_loss: True
 
 val:
-  batch_size: 4 # Validation batch size
+  batch_size: 6 # Validation batch size
   num_workers: 6 # Number of workers for the validation data set
 
 test:
