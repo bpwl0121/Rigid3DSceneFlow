@@ -175,6 +175,7 @@ class MELidarDataset(data.Dataset):
                     pc_2 = pc_2[is_not_ground_t,:]
                     labels_2 = labels_2[is_not_ground_t]
 
+            # True for all cases from default yaml file
             if self.only_near_points:
                 is_near_s = (pc_1[:, 2] < 35)
                 is_near_t = (pc_2[:, 2] < 35)
@@ -207,15 +208,19 @@ class MELidarDataset(data.Dataset):
             T_1[0:3,3] = (np.random.rand(3) - 0.5) * 0.5
             T_2[0:3,3] = (np.random.rand(3) - 0.5) * 0.5
 
+            # Y axis 
             T_1[1,3] = (np.random.rand(1) - 0.5) * 0.1 
             T_2[1,3] = (np.random.rand(1) - 0.5) * 0.1
 
+            # apply rotation and translation, but actually no rotation from ego to augmentation coordinate
             pc_1 = (np.matmul(T_1[0:3, 0:3], pc_1.transpose()) + T_1[0:3,3:4]).transpose()
             pc_2 = (np.matmul(T_2[0:3, 0:3], pc_2.transpose()) + T_2[0:3,3:4]).transpose()
 
+            # pose_1 before is from ego to world, T_1 is from ego to aug, so pose_1 after is from aug to world
             pose_1 = np.matmul(pose_1, np.linalg.inv(T_1))
             pose_2 = np.matmul(pose_2, np.linalg.inv(T_2))
 
+            # from aug1 to aug2
             rel_trans = np.linalg.inv(pose_2) @ pose_1
 
             R_ego = rel_trans[0:3,0:3]
@@ -289,6 +294,7 @@ class MELidarDataset(data.Dataset):
             feats_train1.append(np.ones((pc_1.shape[0], 1)))
             feats_train2.append(np.ones((pc_2.shape[0], 1)))
 
+        # always input_features: absolute_coords in the original files
         elif self.input_features == 'absolute_coords':
             feats_train1.append(pc_1)
             feats_train2.append(pc_2)

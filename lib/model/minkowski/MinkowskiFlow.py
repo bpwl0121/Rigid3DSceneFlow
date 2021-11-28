@@ -411,7 +411,7 @@ class EgoMotionHead(nn.Module):
         return R_est, t_est, perm_matrix
 
 
-
+# for segmentation head, the out_channels=2 from the yaml config
 class SparseSegHead(ME.MinkowskiNetwork):
 
     def __init__(self,

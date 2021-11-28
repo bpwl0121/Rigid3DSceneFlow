@@ -26,7 +26,7 @@ class FlowTrainer:
         self.compute_metrics = EvalMetrics(args)
         self.model = model.to(device)
 
-    
+    # only in the training
     def train_step(self, data):
         ''' 
         Performs a single training step.
@@ -51,7 +51,7 @@ class FlowTrainer:
         
         return loss_values, metrics, losses['total_loss']
 
-    
+    # only in the inference
     def eval_step(self, data):
         ''' 
         Performs a single evaluation epoch.
@@ -71,7 +71,7 @@ class FlowTrainer:
        
         return metrics
 
-
+    # only in the validation part of training 
     def validate(self, val_loader):
         ''' 
         Performs the whole validation 

@@ -86,6 +86,8 @@ def main(cfg, config_name):
     chkpt_interval = chkpt_interval if chkpt_interval > 0 else abs(chkpt_interval* len(train_loader))
 
     val_interval = cfg['train']['val_interval']
+    # actually, the val_interval shoued be adjusted to the acc_iter_size, but not
+    # otherwise, e.g. val_interval=-1, acc_iter_size=2, the val part will be called every 2 epochs not 1 we want
     val_interval = val_interval if val_interval > 0 else abs(val_interval* len(train_loader))
 
     # if not a pretrained model epoch and iterations should be -1 
@@ -164,6 +166,7 @@ def main(cfg, config_name):
             tbar.set_description('Loss: {:.3g}'.format(batch_losses['total_loss']))
             tbar.update(1)
 
+            # if else statement, since the initial dict are empty
             # Save the running metrics and losses
             if not running_metrics:
                 running_metrics = copy.deepcopy(batch_metrics)

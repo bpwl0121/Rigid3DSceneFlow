@@ -221,6 +221,7 @@ class MinkowskiFlow(nn.Module):
         logits_s = self.seg_decoder(dec_f_1)
         logits_t = self.seg_decoder(dec_f_2)
 
+        # output has 2 channels, for background and foreground 
         self.inferred_values['semantic_logits_s'] = logits_s
         self.inferred_values['semantic_logits_t'] = logits_t
 
@@ -285,7 +286,7 @@ class MinkowskiFlow(nn.Module):
         self.inferred_values['clusters_s_t'] = clusters_s_trans
 
 
-
+    # inferred_values = self.model(sinput1, sinput2, input_dict['pcd_eval_s'], input_dict['pcd_eval_t'], input_dict['fg_labels_s'], input_dict['fg_labels_t'])
     def forward(self, st_1, st_2, xyz_1, xyz_2, sem_label_s, sem_label_t):
         
         self.inferred_values = {}
@@ -296,10 +297,13 @@ class MinkowskiFlow(nn.Module):
 
         dec_feat_1 = self.decoder(enc_feat_1, skip_features_1)
         dec_feat_2 = self.decoder(enc_feat_2, skip_features_2)
+        # all _infer methods use the output of decoder as dec_feat_1 and dec_feat_2
 
         # Rune the background segmentation head
         if self.estimate_semantic:
             self._infer_semantics(dec_feat_1, dec_feat_2)
+            # https://github.com/NVIDIA/MinkowskiEngine/blob/56e026605bdf516f075056103f3a0aed4327e823/MinkowskiEngine/MinkowskiSparseTensor.py#L284 for the .F
+            #  .F.max(1)[1] along the batch, get the indices of the max, 0 or 1 since the out channel from seghead is 2
             est_sem_label_s = self.inferred_values['semantic_logits_s'].F.max(1)[1]
             est_sem_label_t = self.inferred_values['semantic_logits_t'].F.max(1)[1]
 
