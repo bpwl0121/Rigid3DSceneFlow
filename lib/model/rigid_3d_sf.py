@@ -28,7 +28,7 @@ class MinkowskiFlow(nn.Module):
         
         self.estimate_ego, self.estimate_flow, self.estimate_semantic, self.estimate_cluster = False, False, False, False
 
-        self.upsampling_k = 36 if args['data']['dataset'] in ['StereoKITTI_ME', 'FlyingThings3D_ME'] else 2
+        self.upsampling_k = 36 if args['data']['dataset'] in ['StereoKITTI_ME', 'FlyingThings3D_ME'] else 3
         self.tau_offset = 0.025 if args['data']['dataset'] in ['StereoKITTI_ME', 'FlyingThings3D_ME'] else 0.03
 
         if args['data']['input_features'] == 'occupancy':
@@ -197,7 +197,7 @@ class MinkowskiFlow(nn.Module):
             feat_t_ego = feat_t[:,idx_ego_t,:]
 
             # Force transport to be zero for points further than 10 m apart
-            support_ego = (pairwise_distance(coor_s_ego, coor_t_ego, normalized=False ) < 10 ** 2).float()
+            support_ego = (pairwise_distance(coor_s_ego, coor_t_ego, normalized=False ) < 5 ** 2).float()
 
             # Cost matrix in the feature space
             feat_dist = pairwise_distance(feat_s_ego, feat_t_ego)
