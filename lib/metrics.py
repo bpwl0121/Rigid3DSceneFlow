@@ -24,6 +24,8 @@ class EvalMetrics(nn.Module):
         # Initialize the dictionary
         metrics = {}
         
+        # for weakly training: ['metrics']['flow'] is False
+        # for lidar kitti both True 
         if (self.args['method']['flow'] and self.args['metrics']['flow']):
             assert (('refined_flow' in inferred_values) & ('flow_eval' in gt_data)), "Flow metrics selected \
                                 but either est or gt flow not provided"

@@ -98,7 +98,9 @@ class MinkowskiFlow(nn.Module):
         coarse_flow = []
 
         # Iterate over the examples in the batch
+        # https://github.com/NVIDIA/MinkowskiEngine/blob/8a9dae528f47e33d6f48820cbdfe6f8e7fab12ef/MinkowskiEngine/MinkowskiTensor.py#L309
         for b_idx in range(len(flow_f_1.decomposed_coordinates)):
+            # flow_f_1 is ME.SparseTensor, flow_f_1.F:features, flow_f_1.C:coordinates
             feat_s = flow_f_1.F[flow_f_1.C[:,0] == b_idx]
             feat_t = flow_f_2.F[flow_f_2.C[:,0] == b_idx]
 
@@ -113,19 +115,23 @@ class MinkowskiFlow(nn.Module):
             # Force transport to be zero for points further than 10 m apart
             support = (pairwise_distance(coor_s, coor_t, normalized=False ) < 10**2).float()
 
-            # Transport cost matrix
+            # Transport cost matrix, size [1, n, m], since the in the for loop with b_idx(batch)
+            # features dimension 128, the number of points is below 8192
             C = pairwise_distance(feat_s, feat_t)
 
+            # size [1, n, m]
             K = torch.exp(-C / (torch.exp(self.epsilon) + self.tau_offset)) * support
        
+            # size [1, n, 1]
             row_sum  = K.sum(-1, keepdim=True)
 
-            # Estimate flow
+            # Estimate flow  [1, n, m]@[1, m, co] -> [1, n, co], co: dimension of coordinate
             corr_flow = (K  @ coor_t) / (row_sum + 1e-8) - coor_s
             
             coarse_flow.append(corr_flow.squeeze(0))
         
 
+        # coarse_flow stack as coor_s like [batchsize*n,co] due to the ME sparse tensor
         coarse_flow = torch.cat(coarse_flow,dim=0)
 
         st_cf = ME.SparseTensor(features=coarse_flow, 
@@ -143,6 +149,7 @@ class MinkowskiFlow(nn.Module):
 
 
 
+    # sem_label_s,  sem_label_t GT for training, prediction for test
     def _infer_ego_motion(self, flow_f_1, flow_f_2, sem_label_s,  sem_label_t):
 
         ego_motion_R = []
@@ -188,6 +195,7 @@ class MinkowskiFlow(nn.Module):
             feat_s, feat_t = feat_s[mask_s, :].unsqueeze(0), feat_t[mask_t, :].unsqueeze(0)
             
             # Sample the points randomly (to keep the computation memory tracktable)
+            # we only use self.ego_n_points(1024) from background
             idx_ego_s = torch.randperm(coor_s.shape[1])[:self.ego_n_points]
             idx_ego_t = torch.randperm(coor_t.shape[1])[:self.ego_n_points]
 
@@ -196,12 +204,17 @@ class MinkowskiFlow(nn.Module):
             feat_s_ego = feat_s[:,idx_ego_s,:]
             feat_t_ego = feat_t[:,idx_ego_t,:]
 
-            # Force transport to be zero for points further than 10 m apart
+            # Force transport to be zero for points further than 5 m apart (10 m to 5 m from the change of orignial)
+            # calculate the distance of every point from frame1 to frame2 in coordinate space, and make a mask
             support_ego = (pairwise_distance(coor_s_ego, coor_t_ego, normalized=False ) < 5 ** 2).float()
 
             # Cost matrix in the feature space
+            # calculate the distance of every point from frame1 to frame2 in the feature space
             feat_dist = pairwise_distance(feat_s_ego, feat_t_ego)
 
+            # sinkhorn algorithm with slack column and row to get the similarity of points from background
+            # get the corresponding points from pc1 to pc2 using similarity matrix
+            # use kabsch_transformation_estimation to get the rigid transformation for ego motion
             R_est, t_est, perm_matrix = self.ego_motion_decoder(feat_dist, support_ego, coor_s_ego, coor_t_ego)
 
             ego_motion_R.append(R_est)
@@ -241,6 +254,7 @@ class MinkowskiFlow(nn.Module):
         batch_size = torch.max(st_s.coordinates[:,0]) + 1
 
         for b_idx in range(batch_size):
+            # only foreground points
             b_fgrnd_idx_s = torch.where(sem_label_s[running_idx_s:(running_idx_s + st_s.C[st_s.C[:,0] == b_idx,1:].shape[0])] == 1)[0]
             b_fgrnd_idx_t = torch.where(sem_label_t[running_idx_t:(running_idx_t + st_t.C[st_t.C[:,0] == b_idx,1:].shape[0])] == 1)[0]
 
@@ -268,6 +282,8 @@ class MinkowskiFlow(nn.Module):
                 # Estimate the relative transformation parameteres of each cluster
                 if self.test_flag:
                     for c_idx in clusters_s[str(b_idx)]:
+                        # in one sample: every cluster in pc1 + its inferred flow -> the reconstructed foreground cluster in pc2
+                        # so we can calculate its rigid transform
                         cluster_xyz_s = (st_s.C[c_idx,1:] * self.voxel_size).unsqueeze(0).to(self.device)
                         cluster_flow = self.inferred_values['refined_flow'][c_idx,:].unsqueeze(0)
                         reconstructed_xyz = cluster_xyz_s + cluster_flow
@@ -282,11 +298,15 @@ class MinkowskiFlow(nn.Module):
 
         self.inferred_values['clusters_s'] = clusters_s
         self.inferred_values['clusters_t'] = clusters_t
+        # only for test part available 
         self.inferred_values['clusters_s_R'] = clusters_s_rot
         self.inferred_values['clusters_s_t'] = clusters_s_trans
 
 
-    # inferred_values = self.model(sinput1, sinput2, input_dict['pcd_eval_s'], input_dict['pcd_eval_t'], input_dict['fg_labels_s'], input_dict['fg_labels_t'])
+    # inferred_values = self.model(sinput1, sinput2, input_dict['pcd_s'], input_dict['pcd_t'], input_dict['fg_labels_s'], input_dict['fg_labels_t']) for train
+    # inferred_values = self.model(sinput1, sinput2, input_dict['pcd_eval_s'], input_dict['pcd_eval_t'], input_dict['fg_labels_s'], input_dict['fg_labels_t']) for eval
+    # sinput1 = ME.SparseTensor(features=input_dict['sinput_s_F'].to(self.device), coordinates=input_dict['sinput_s_C'].to(self.device))
+    # xyz_2 not in use for all case, xyz_1 is used only for upsampling
     def forward(self, st_1, st_2, xyz_1, xyz_2, sem_label_s, sem_label_t):
         
         self.inferred_values = {}
@@ -308,6 +328,7 @@ class MinkowskiFlow(nn.Module):
             est_sem_label_t = self.inferred_values['semantic_logits_t'].F.max(1)[1]
 
         # Rune the scene flow head
+        # get the flow: self.inferred_values['refined_flow'] = refined_flow.F
         if self.estimate_flow:            
             self._infer_flow(dec_feat_1, dec_feat_2)
 
@@ -353,9 +374,10 @@ class MinkowskiFlow(nn.Module):
                 self.inferred_values['t_est'] = torch.from_numpy(t_e).to(self.device)
 
 
-            # Update the flow vectors of the background based on the ego motion         
+            # Update the flow vectors of the background based on the ego motion for all points       
             xyz_1_transformed = transform_point_cloud(coor_s.to(self.device), self.inferred_values['R_est'], self.inferred_values['t_est'])
             bckg_idx = torch.where(est_sem_label_s == 0)[0]
+            # Using ego motion to estimate the background flow
             self.inferred_values['refined_flow'][bckg_idx,:] = xyz_1_transformed[0,bckg_idx,:].to(self.device) - coor_s[bckg_idx,:].to(self.device)
 
         if self.test_flag and self.estimate_cluster:
@@ -364,6 +386,7 @@ class MinkowskiFlow(nn.Module):
             if self.test_flag and self.postprocess_clusters:
                 fgnd_mask_t = (est_sem_label_t == 1).unsqueeze(0)
 
+                # self.inferred_values['clusters_s']['0'], ['0'] means the first sample of the batch, and only 1 sample in a batch during test duo to config
                 for idx, c_idx in enumerate(self.inferred_values['clusters_s']['0']):
                     pc_s_cluster = coor_s[c_idx,:]
                     pc_t_fgnd = coor_t[fgnd_mask_t[0],:]
@@ -387,10 +410,16 @@ class MinkowskiFlow(nn.Module):
                 cluster_transformed = transform_point_cloud(pc_s_cluster.to(self.device), self.inferred_values['clusters_s_R']['0'][idx], 
                                                             self.inferred_values['clusters_s_t']['0'][idx])
 
+                # foreground flow obtained by the cluster motion
                 self.inferred_values['refined_flow'][c_idx,:] = cluster_transformed.squeeze(0).to(self.device) - pc_s_cluster.to(self.device)
 
+        # remaining points which are foreground without cluster can be estimated just in the flow part
+        # so foreground cluster and background ego motion have the rigid transformation constraint
 
+        #################################################################################
         # Upsample the flow from the voxel centers to the original points
+        # training: xyz_1 in original coordinate after voxelization, other inferred value in voxel coordinate, corresponding points scale by voxel_size 
+        # test: xyz_1 in original coordinate before voxelization, other inferred value in voxel coordinate, so the interpolation for getting the value for xyz_1
         
         if self.estimate_flow:
             # Finally we upsample the voxel flow to the actuall raw points 
@@ -400,6 +429,7 @@ class MinkowskiFlow(nn.Module):
 
             # Interpolate the flow from the voxels to the continuos coordinates on the coarse level and upsample the labels
             upsampled_voxel_flow =  upsample_flow(xyz_1, refined_voxel_flow, k_value=self.upsampling_k, voxel_size=self.voxel_size)
+            # self.inferred_values['refined_rigid_flow'] is upsampled
             self.inferred_values['refined_rigid_flow'] = torch.cat(upsampled_voxel_flow, dim=0)
 
         if self.estimate_semantic:

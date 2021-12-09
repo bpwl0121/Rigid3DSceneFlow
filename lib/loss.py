@@ -29,7 +29,7 @@ class TrainLoss(nn.Module):
         self.ego_l1_criterion = nn.L1Loss(reduction='mean')
         self.ego_outlier_criterion = OutlierLoss()
         
-        # Background segmentation loss
+        # Background segmentation loss, background_loss is True not weighted
         if args['loss']['background_loss'] == 'weighted':
 
             # Based on the dataset analysis there are 14 times more background labels
@@ -48,6 +48,7 @@ class TrainLoss(nn.Module):
         # Initialize the dictionary
         losses = {}
         
+        # for weakly training, no flow_loss
         if self.args['method']['flow'] and self.args['loss']['flow_loss']:
             assert (('coarse_flow' in inferred_values) & ('flow' in gt_data)), 'Flow loss selected \
                                                                     but either est or gt flow not provided'
@@ -59,6 +60,7 @@ class TrainLoss(nn.Module):
                                                  gt_data['flow']) * self.args['loss'].get('flow_loss_w', 1.0)
 
 
+        # for weakly training, both True
         if self.args['method']['ego_motion'] and self.args['loss']['ego_loss']:
             assert (('R_est' in inferred_values) & ('R_s_t' in gt_data) is not None), "Ego motion loss selected \
                                             but either est or gt ego motion not provided"
@@ -80,6 +82,7 @@ class TrainLoss(nn.Module):
                 mask_temp = mask[prev_idx: prev_idx + gt_data['len_batch'][batch_idx][0]]
 
                 # Transform the point cloud with gt and estimated ego-motion parameters
+                # no correspondence for point from source to target at background, so target is not used
                 pc_t_gt_temp = transform_point_cloud(p_s_temp[mask_temp,1:4], gt_data['R_ego'][batch_idx,:,:], gt_data['t_ego'][batch_idx,:,:])
                 pc_t_est_temp = transform_point_cloud(p_s_temp[mask_temp,1:4], inferred_values['R_est'][batch_idx,:,:], inferred_values['t_est'][batch_idx,:,:])
                 
@@ -95,6 +98,7 @@ class TrainLoss(nn.Module):
             losses['outlier_loss'] = self.ego_outlier_criterion(inferred_values['permutation']) * self.args['loss'].get('inlier_loss_w', 1.0)
 
         # Background segmentation loss
+        # for weakly training, both True
         if self.args['method']['semantic'] and self.args['loss']['background_loss']:
             assert (('semantic_logits_s' in inferred_values) & ('fg_labels_s' in gt_data)), "Background loss selected but either est or gt labels not provided"
             
@@ -110,6 +114,7 @@ class TrainLoss(nn.Module):
             losses['semantic_loss'] = semantic_loss
 
         # Foreground loss
+        # for weakly training, both True
         if self.args['method']['clustering'] and self.args['loss']['foreground_loss']:
             assert ('clusters_s' in inferred_values), "Foreground loss selected but inferred cluster labels not provided"
             
@@ -130,14 +135,17 @@ class TrainLoss(nn.Module):
             # Iterate over the samples in the batch
             for batch_idx in range(gt_data['R_ego'].shape[0]):
     
+                # temp_foreground_mask for current batch, 0 or 1
                 temp_foreground_mask_s = foreground_mask_s[prev_idx_s : prev_idx_s + gt_data['len_batch'][batch_idx][0]]
                 temp_foreground_mask_t = foreground_mask_t[prev_idx_t : prev_idx_t + gt_data['len_batch'][batch_idx][1]]
 
                 if torch.sum(temp_foreground_mask_s) > 50 and torch.sum(temp_foreground_mask_t) > 50:
                     foreground_xyz_s_temp = xyz_s[prev_idx_s: prev_idx_s + gt_data['len_batch'][batch_idx][0],:]
                     foreground_xyz_t_temp = xyz_t[prev_idx_t: prev_idx_t + gt_data['len_batch'][batch_idx][1],:]
+                    # self.inferred_values['refined_rigid_flow'] is upsampled 
                     foreground_flow = inferred_values['refined_rigid_flow'][prev_idx_s: prev_idx_s + gt_data['len_batch'][batch_idx][0],:]
 
+                    # obtain foreground points cloud using segmentation label， apply flow to them
                     foreground_xyz_s = foreground_xyz_s_temp[temp_foreground_mask_s,:]
                     foreground_flow = foreground_flow[temp_foreground_mask_s,:]
                     foreground_xyz_t = foreground_xyz_t_temp[temp_foreground_mask_t,:]
@@ -169,11 +177,13 @@ class TrainLoss(nn.Module):
                     reconstructed_xyz = cluster_xyz_s + cluster_flow
 
                     # Compute the unweighted Kabsch estimation (transformation parameters which best explain the vectors)
+                    # obtain the rigid transformation through flow
                     R_cluster, t_cluster, _, _ = kabsch_transformation_estimation(cluster_xyz_s, reconstructed_xyz)
 
                     # Detach the gradients such that they do not flow through the tansformation parameters but only through flow
                     rigid_xyz = (torch.matmul(R_cluster, cluster_xyz_s.transpose(1, 2)) + t_cluster ).detach().squeeze(0).transpose(0,1)
                     
+                    # apply transformation for pc1, l1 loss between transformed pc1 and pc1+flow
                     rigidity_loss += self.rigidity_criterion(reconstructed_xyz.squeeze(0), rigid_xyz)
 
                     n_clusters += 1

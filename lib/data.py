@@ -50,6 +50,7 @@ def collate_fn(list_data):
         flow_batch.append(to_tensor(flow[batch_id]))
         flow_eval_batch.append(to_tensor(flow_eval[batch_id]))
 
+    # https://github.com/NVIDIA/MinkowskiEngine/blob/b975751d89732bf8048418770b349489baca864a/MinkowskiEngine/utils/collation.py#L96
     coords_batch1, feats_batch1 = ME.utils.sparse_collate(coords=coords1, feats=feats1)
     coords_batch2, feats_batch2 = ME.utils.sparse_collate(coords=coords2, feats=feats2)
   
@@ -244,6 +245,7 @@ class MELidarDataset(data.Dataset):
         else:
             idx_2 = np.random.choice(pc_2.shape[0], pc_2.shape[0], replace=False)
 
+        # pc_1_eval: points before voxelization
         pc_1_eval = pc_1[idx_1,:]
         flow_eval = flow[idx_1,:]
         labels_1_eval = labels_1[idx_1]
@@ -256,7 +258,8 @@ class MELidarDataset(data.Dataset):
         _, sel2 = ME.utils.sparse_quantize(np.ascontiguousarray(pc_2) / self.voxel_size, return_index=True)
 
 
-        # Slect the voxelized points
+        # Select the voxelized points
+        # pc_1: points after voxelization
         pc_1 = pc_1[sel1,:]
         labels_1 = labels_1[sel1]
         flow = flow[sel1,:]

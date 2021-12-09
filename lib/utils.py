@@ -117,6 +117,7 @@ def load_checkpoint(model, optimizer, scheduler, filename):
     return model, optimizer, scheduler, start_epoch, total_it, metric_val_best
 
 
+# Not in use
 def load_point_cloud(file, data_type='numpy'):
     """
     Loads the point cloud coordinates from the '*.ply' file.
@@ -153,7 +154,8 @@ def sorted_alphanum(file_list_ordered):
     sorted_list = sorted(file_list_ordered, key=alphanum_key)
 
     return sorted_list
-    
+
+# Not in use    
 def get_file_list(path, extension=None):
     """
     Build a list of all the files in the provided path
@@ -176,6 +178,7 @@ def get_file_list(path, extension=None):
     return file_list
 
 
+# Not in use   
 def get_folder_list(path):
     """
     Build a list of all the files in the provided path
@@ -203,6 +206,7 @@ def n_model_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
+# https://github.com/canqin001/PointDAN/blob/5001b38cb5506b1c6b40ad1329c1d6f4fbbdd26d/point_utils.py#L78
 def pairwise_distance(src, dst, normalized=True):
     """Calculates squared Euclidean distance between each two points.
     Args:
@@ -237,11 +241,11 @@ def pairwise_distance(src, dst, normalized=True):
     
     return dist
 
-
+# TODO understand the detail
 def rotation_error(R1, R2):
     """
     Torch batch implementation of the rotation error between the estimated and the ground truth rotatiom matrix. 
-    Rotation error is defined as r_e = \arccos(\frac{Trace(\mathbf{R}_{ij}^{T}\mathbf{R}_{ij}^{\mathrm{GT}) - 1}{2})
+    Rotation error is defined as r_e = \arccos(\frac{Trace(\mathbf{R}_{ij}^{T}\mathbf{R}_{ij}^{\mathrm{GT}}) - 1}{2})
     Args: 
         R1 (torch tensor): Estimated rotation matrices [b,3,3]
         R2 (torch tensor): Ground truth rotation matrices [b,3,3]
@@ -263,8 +267,8 @@ def rotation_error(R1, R2):
 
 def translation_error(t1, t2):
     """
-    Torch batch implementation of the rotation error between the estimated and the ground truth rotatiom matrix. 
-    Rotation error is defined as r_e = \arccos(\frac{Trace(\mathbf{R}_{ij}^{T}\mathbf{R}_{ij}^{\mathrm{GT}) - 1}{2})
+    Torch batch implementation of the translation error between the estimated and the ground truth rotatiom matrix. 
+    Rotation error is defined as the normalized distance of 2 translation 
     Args: 
         t1 (torch tensor): Estimated translation vectors [b,3,1]
         t2 (torch tensor): Ground truth translation vectors [b,3,1]
@@ -527,7 +531,9 @@ def compute_epe(est_flow, gt_flow, sem_label=None, eval_stats =False, mask=None)
 
     if eval_stats:
         
+        # get the norm of flows from all points
         gt_f_magnitude = torch.norm(gt_flow, dim=-1)
+        # gt_f_magnitude_np not in use
         gt_f_magnitude_np = np.linalg.norm(gt_flow.cpu(), axis=-1)
         relative_err = epe_per_point / (gt_f_magnitude + 1e-4)
         acc3d_strict = (
@@ -544,7 +550,7 @@ def compute_epe(est_flow, gt_flow, sem_label=None, eval_stats =False, mask=None)
 
     return metrics
 
-
+# Not in use
 def compute_l1_loss(est_flow, gt_flow):
     """
     Compute training loss.

@@ -319,6 +319,7 @@ class EgoMotionHead(nn.Module):
         self.softplus = torch.nn.Softplus()
 
 
+    # not in use
     def compute_rigid_transform(self, xyz_s, xyz_t, weights):
         """Compute rigid transforms between two point sets
 
@@ -371,6 +372,7 @@ class EgoMotionHead(nn.Module):
 
         # Sinkhorn iterations
 
+        # https://pytorch.org/docs/stable/generated/torch.nn.ZeroPad2d.html
         zero_pad = nn.ZeroPad2d((0, 1, 0, 1))
         log_alpha_padded = zero_pad(log_alpha[:, None, :, :])
 
@@ -395,6 +397,9 @@ class EgoMotionHead(nn.Module):
         return log_alpha
 
 
+    # R_est, t_est, perm_matrix = self.ego_motion_decoder(feat_dist, support_ego, coor_s_ego, coor_t_ego)
+    # feat_dist: feature distance matrix from point of coor_s_ego and coor_t_ego
+    # support_ego: mask from coordinate distance matrix from point of coor_s_ego and coor_t_ego
     def forward(self, score_matrix, mask, xyz_s, xyz_t):
 
         affinity = -(score_matrix - self.softplus(self.alpha))/(torch.exp(self.beta) + 0.02)
