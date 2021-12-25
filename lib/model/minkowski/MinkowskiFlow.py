@@ -5,7 +5,7 @@ import MinkowskiEngine as ME
 import MinkowskiEngine.MinkowskiFunctional as MEF
 
 from lib.model.minkowski.ME_layers import get_norm_layer, get_res_block
-from lib.utils import kabsch_transformation_estimation
+from lib.utils import kabsch_transformation_estimation, umeyama_transformation_estimation
 
 _EPS = 1e-6
 
@@ -413,6 +413,7 @@ class EgoMotionHead(nn.Module):
         # Compute transform and transform points
         #transform = self.compute_rigid_transform(xyz_s, weighted_t, weights=torch.sum(perm_matrix, dim=2))
         R_est, t_est, _, _ = kabsch_transformation_estimation(xyz_s, weighted_t, weights=torch.sum(perm_matrix, dim=2))
+        R_est, t_est, _, _ = umeyama_transformation_estimation(xyz_s, weighted_t, weights=torch.sum(perm_matrix, dim=2))
         return R_est, t_est, perm_matrix
 
 

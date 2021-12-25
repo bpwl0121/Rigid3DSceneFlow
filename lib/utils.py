@@ -277,6 +277,11 @@ def translation_error(t1, t2):
     """
     return torch.norm(t1-t2, dim=(1, 2))
 
+def umeyama_transformation_estimation(x1, x2):
+    rotation_matrix, translation_matrix = o3d.ops.corresponding_points_alignment(x1, x2)
+    translation_matrix = torch.unsqueeze(translation_matrix, 2)
+
+    return rotation_matrix, translation_matrix
 
 def kabsch_transformation_estimation(x1, x2, weights=None, normalize_w = True, eps = 1e-7, best_k = 0, w_threshold = 0, compute_residuals = False):
     """
