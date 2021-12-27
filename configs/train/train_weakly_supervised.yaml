@@ -33,7 +33,7 @@ network:
   pretrained_path: '' # Path to the pretrained model
   
 loss: 
-  background_loss: focal # Compute background loss
+  background_loss: True # Compute background loss
   flow_loss: False # Compute flow loss
   ego_loss: True # Compute ego-motion loss
   foreground_loss: True # Compute foreground loss
