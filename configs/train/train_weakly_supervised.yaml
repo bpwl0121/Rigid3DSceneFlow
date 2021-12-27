@@ -4,6 +4,7 @@ method:
   ego_motion: True # Use ego-motion head
   semantic: True # Use background segmentation head
   clustering: True # Use foreground clustering head
+  loop_ego: False
 
 misc:
   run_mode: train # Mode to run the network in
@@ -32,7 +33,7 @@ network:
   pretrained_path: '' # Path to the pretrained model
   
 loss: 
-  background_loss: True # Compute background loss
+  background_loss: focal # Compute background loss
   flow_loss: False # Compute flow loss
   ego_loss: True # Compute ego-motion loss
   foreground_loss: True # Compute foreground loss

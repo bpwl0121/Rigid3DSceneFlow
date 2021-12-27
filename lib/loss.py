@@ -104,6 +104,41 @@ class TrainLoss(nn.Module):
             losses['ego_loss'] = self.ego_l1_criterion(pc_t_est, pc_t_gt) * self.args['loss'].get('ego_loss_w', 1.0)
             losses['outlier_loss'] = self.ego_outlier_criterion(inferred_values['permutation']) * self.args['loss'].get('inlier_loss_w', 1.0)
 
+###################################################################################
+        if self.args['method']['ego_motion'] and self.args['loss']['ego_loss'] and self.args['method']['loop_ego']:
+            assert (('R_est' in inferred_values) & ('R_s_t' in gt_data) is not None), "Ego motion loss selected \
+                                            but either est or gt ego motion not provided"
+                                                            
+            assert 'permutation' in inferred_values is not None, 'Outlier loss selected \
+                                                                        but the permutation matrix is not provided'
+
+            mask_t = (gt_data['fg_labels_t'] == 0)
+
+            prev_idx = 0
+            pc_s_gt, pc_s_est = [], []
+
+            # Iterate over the samples in the batch
+            for batch_idx in range(gt_data['R_ego'].shape[0]):
+                
+                # Convert the voxel indices back to the coordinates
+                p_t_temp = gt_data['sinput_t_C'][prev_idx: prev_idx + gt_data['len_batch'][batch_idx][1],:].to(self.device) * self.args['misc']['voxel_size']
+                mask_temp = mask[prev_idx: prev_idx + gt_data['len_batch'][batch_idx][1]]
+
+                # Transform the point cloud with gt and estimated ego-motion parameters
+                # no correspondence for point from source to target at background, so target is not used
+                pc_s_gt_temp = transform_point_cloud(p_t_temp[mask_temp,1:4], gt_data['R_ego'][batch_idx,:,:].T, -gt_data['t_ego'][batch_idx,:,:])
+                pc_s_est_temp = transform_point_cloud(p_t_temp[mask_temp,1:4], inferred_values['R_est_t'][batch_idx,:,:], inferred_values['t_est_t'][batch_idx,:,:])
+                
+                pc_s_gt.append(pc_s_gt_temp.squeeze(0))
+                pc_s_est.append(pc_s_est_temp.squeeze(0))
+
+            pc_s_est = torch.cat(pc_s_est, 0)
+            pc_s_gt = torch.cat(pc_s_gt, 0)
+
+            losses['ego_loss'] += self.ego_l1_criterion(pc_s_est, pc_s_gt) * self.args['loss'].get('ego_loss_w', 1.0)
+            losses['outlier_loss'] += self.ego_outlier_criterion(inferred_values['permutation_t']) * self.args['loss'].get('inlier_loss_w', 1.0)
+###########################################################################################
+
         # Background segmentation loss
         # for weakly training, both True
         if self.args['method']['semantic'] and self.args['loss']['background_loss']:

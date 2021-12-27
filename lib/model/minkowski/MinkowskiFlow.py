@@ -413,7 +413,7 @@ class EgoMotionHead(nn.Module):
         # Compute transform and transform points
         #transform = self.compute_rigid_transform(xyz_s, weighted_t, weights=torch.sum(perm_matrix, dim=2))
         R_est, t_est, _, _ = kabsch_transformation_estimation(xyz_s, weighted_t, weights=torch.sum(perm_matrix, dim=2))
-        R_est, t_est, _, _ = umeyama_transformation_estimation(xyz_s, weighted_t, weights=torch.sum(perm_matrix, dim=2))
+        #R_est, t_est, _, _ = umeyama_transformation_estimation(xyz_s, weighted_t, weights=torch.sum(perm_matrix, dim=2))
         return R_est, t_est, perm_matrix
 
 
@@ -462,3 +462,40 @@ class SparseSegHead(ME.MinkowskiNetwork):
 
 
         return out
+
+
+############################################################################
+class EgoMotionHeadLoop(EgoMotionHead):
+    """
+    Class defining EgoMotionHead
+    """
+
+    def __init__(self, add_slack=True, sinkhorn_iter=5):
+        EgoMotionHead.__init__(self)
+
+    def getOneTransformation(self, score_matrix, mask, xyz_s, xyz_t):
+    
+        affinity = -(score_matrix - self.softplus(self.alpha))/(torch.exp(self.beta) + 0.02)
+
+         # Compute weighted coordinates
+        log_perm_matrix = self.sinkhorn(affinity, n_iters=self.sinkhorn_iter, slack=self.slack)
+
+        perm_matrix = torch.exp(log_perm_matrix) * mask
+        weighted_t = perm_matrix @ xyz_t / (torch.sum(perm_matrix, dim=2, keepdim=True) + _EPS)
+
+        # Compute transform and transform points
+        #transform = self.compute_rigid_transform(xyz_s, weighted_t, weights=torch.sum(perm_matrix, dim=2))
+        R_est, t_est, _, _ = kabsch_transformation_estimation(xyz_s, weighted_t, weights=torch.sum(perm_matrix, dim=2))
+
+        return R_est, t_est, perm_matrix
+
+    def forward(self, score_matrix, mask, xyz_s, xyz_t):
+        R_est_s, t_est_s, perm_matrix_s=self.getOneTransformation(score_matrix, mask, xyz_s, xyz_t)
+        
+        R_est_t, t_est_t, perm_matrix_t=self.getOneTransformation(score_matrix.T, mask.T, xyz_t, xyz_s)
+
+        R_est = [R_est_s,R_est_t]
+        t_est = [t_est_s,t_est_t]
+        perm_matrix=[perm_matrix_s,perm_matrix_t]
+
+        return R_est, t_est, perm_matrix

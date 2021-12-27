@@ -8,7 +8,7 @@ import MinkowskiEngine as ME
 
 from lib.utils import pairwise_distance, transform_point_cloud, kabsch_transformation_estimation, refine_ego_motion, refine_cluster_motion
 from lib.utils import upsample_flow, upsample_bckg_labels, upsample_cluster_labels
-from lib.model.minkowski.MinkowskiFlow import SparseEnoder, SparseDecoder, SparseFlowRefiner, EgoMotionHead, SparseSegHead
+from lib.model.minkowski.MinkowskiFlow import SparseEnoder, SparseDecoder, SparseFlowRefiner, EgoMotionHead, SparseSegHead, EgoMotionHeadLoop
 
 
 
@@ -21,6 +21,8 @@ class MinkowskiFlow(nn.Module):
         self.device = torch.device('cuda' if (torch.cuda.is_available() and args['misc']['use_gpu']) else 'cpu') 
         self.normalize_feature  = args['network']['normalize_features']
         self.test_flag = True if args['misc']['run_mode'] == 'test' else False
+
+        self.loop_ego = args['method']['loop_ego']
 
         if self.test_flag:
             self.postprocess_ego = args['test']['postprocess_ego']
@@ -66,8 +68,12 @@ class MinkowskiFlow(nn.Module):
             self.ego_n_points = args['network']['ego_motion_points']
             self.add_slack = args['network']['add_slack']
             self.sinkhorn_iter = args['network']['sinkhorn_iter']
-                    
-            self.ego_motion_decoder = EgoMotionHead(add_slack=self.add_slack,
+
+            if args['method']['loop_ego']:
+                self.ego_motion_decoder = EgoMotionHeadLoop(add_slack=self.add_slack,
+                                                   sinkhorn_iter=self.sinkhorn_iter)
+            else:
+                self.ego_motion_decoder = EgoMotionHead(add_slack=self.add_slack,
                                                    sinkhorn_iter=self.sinkhorn_iter)
         
         # Initialize the foreground clustering head
@@ -79,7 +85,7 @@ class MinkowskiFlow(nn.Module):
                                                 metric=args['network']['cluster_metric'], eps=args['network']['eps_dbscan'])        
 
 
-
+    # TODO infer another flow
     def _infer_flow(self, flow_f_1, flow_f_2):
         
         # Normalize the features
@@ -226,6 +232,97 @@ class MinkowskiFlow(nn.Module):
         self.inferred_values['R_est'] = torch.cat(ego_motion_R, dim=0)
         self.inferred_values['t_est'] = torch.cat(ego_motion_t, dim=0)
         self.inferred_values['permutation'] = ego_motion_perm
+
+#######################################################################################
+    def _infer_ego_motion_loop(self, flow_f_1, flow_f_2, sem_label_s,  sem_label_t):
+    
+        ego_motion_R_s = []
+        ego_motion_t_s = []
+        ego_motion_perm_s = []
+
+        ego_motion_R_t = []
+        ego_motion_t_t = []
+        ego_motion_perm_t = []
+
+        run_b_len_s = 0
+        run_b_len_t = 0
+
+        # Normalize the features
+        if self.normalize_feature:
+            flow_f_1= ME.SparseTensor(
+                        flow_f_1.F / torch.norm(flow_f_1.F, p=2, dim=1, keepdim=True),
+                        coordinate_map_key=flow_f_1.coordinate_map_key,
+                        coordinate_manager=flow_f_1.coordinate_manager)
+
+            flow_f_2= ME.SparseTensor(
+                        flow_f_2.F / torch.norm(flow_f_2.F, p=2, dim=1, keepdim=True),
+                        coordinate_map_key=flow_f_2.coordinate_map_key,
+                        coordinate_manager=flow_f_2.coordinate_manager)
+
+        for b_idx in range(len(flow_f_1.decomposed_coordinates)):
+            feat_s = flow_f_1.F[flow_f_1.C[:,0] == b_idx]
+            feat_t = flow_f_2.F[flow_f_2.C[:,0] == b_idx]
+
+            coor_s = flow_f_1.C[flow_f_1.C[:,0] == b_idx,1:].to(self.device) * self.voxel_size
+            coor_t = flow_f_2.C[flow_f_2.C[:,0] == b_idx,1:].to(self.device) * self.voxel_size
+
+            # Get the number of points in the current b_idx
+            b_len_s = feat_s.shape[0]
+            b_len_t = feat_t.shape[0]
+
+            # Extract the semantic labels for the current b_idx (0 are the background points)
+            mask_s = (sem_label_s[run_b_len_s: (run_b_len_s + b_len_s)] == 0)
+            mask_t = (sem_label_t[run_b_len_t: (run_b_len_t + b_len_t)] == 0)
+            
+            # Update the running number of points 
+            run_b_len_s += b_len_s
+            run_b_len_t += b_len_t
+
+            # Squared l2 distance between points points of both point clouds
+            coor_s, coor_t = coor_s[mask_s, :].unsqueeze(0), coor_t[mask_t, :].unsqueeze(0)
+            feat_s, feat_t = feat_s[mask_s, :].unsqueeze(0), feat_t[mask_t, :].unsqueeze(0)
+            
+            # Sample the points randomly (to keep the computation memory tracktable)
+            # we only use self.ego_n_points(1024) from background
+            idx_ego_s = torch.randperm(coor_s.shape[1])[:self.ego_n_points]
+            idx_ego_t = torch.randperm(coor_t.shape[1])[:self.ego_n_points]
+
+            coor_s_ego = coor_s[:,idx_ego_s,:]
+            coor_t_ego = coor_t[:,idx_ego_t,:]
+            feat_s_ego = feat_s[:,idx_ego_s,:]
+            feat_t_ego = feat_t[:,idx_ego_t,:]
+
+            # Force transport to be zero for points further than 5 m apart (10 m to 5 m from the change of orignial)
+            # calculate the distance of every point from frame1 to frame2 in coordinate space, and make a mask
+            support_ego = (pairwise_distance(coor_s_ego, coor_t_ego, normalized=False ) < 5 ** 2).float()
+
+            # Cost matrix in the feature space
+            # calculate the distance of every point from frame1 to frame2 in the feature space
+            feat_dist = pairwise_distance(feat_s_ego, feat_t_ego)
+
+            # sinkhorn algorithm with slack column and row to get the similarity of points from background
+            # get the corresponding points from pc1 to pc2 using similarity matrix
+            # use kabsch_transformation_estimation to get the rigid transformation for ego motion
+            R_est, t_est, perm_matrix = self.ego_motion_decoder(feat_dist, support_ego, coor_s_ego, coor_t_ego)
+
+            ego_motion_R_s.append(R_est[0])
+            ego_motion_t_s.append(t_est[0])
+            ego_motion_perm_s.append(perm_matrix[0])
+
+            ego_motion_R_t.append(R_est[1])
+            ego_motion_t_t.append(t_est[1])
+            ego_motion_perm_t.append(perm_matrix[1])
+
+
+        # Save ego motion results
+        self.inferred_values['R_est'] = torch.cat(ego_motion_R_s, dim=0)
+        self.inferred_values['t_est'] = torch.cat(ego_motion_t_s, dim=0)
+        self.inferred_values['permutation'] = ego_motion_perm_s
+
+        self.inferred_values['R_est_t'] = torch.cat(ego_motion_R_t, dim=0)
+        self.inferred_values['t_est_t'] = torch.cat(ego_motion_t_t, dim=0)
+        self.inferred_values['permutation_t'] = ego_motion_perm_t
+##################################################################################
         
 
     def _infer_semantics(self, dec_f_1, dec_f_2):
@@ -337,11 +434,17 @@ class MinkowskiFlow(nn.Module):
             # During training use the given semantic labels to sample the points
             if self.test_flag:
                 if self.estimate_semantic:
-                    self._infer_ego_motion(dec_feat_1, dec_feat_2, est_sem_label_s, est_sem_label_t)
+                    if self.loop_ego:
+                        self._infer_ego_motion_loop(dec_feat_1, dec_feat_2, est_sem_label_s, est_sem_label_t)
+                    else:
+                        self._infer_ego_motion(dec_feat_1, dec_feat_2, est_sem_label_s, est_sem_label_t)
                 else:
                     raise ValueError("Ego motion estimation selected in test phase but background segmentation head was not used")                
             else:
-                self._infer_ego_motion(dec_feat_1, dec_feat_2, sem_label_s, sem_label_t)
+                if self.loop_ego:
+                    self._infer_ego_motion_loop(dec_feat_1, dec_feat_2, sem_label_s, sem_label_t)
+                else:
+                    self._infer_ego_motion(dec_feat_1, dec_feat_2, sem_label_s, sem_label_t)
 
         # Rune the foreground clustering
         if self.estimate_cluster:
