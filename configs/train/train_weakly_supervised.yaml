@@ -4,7 +4,7 @@ method:
   ego_motion: True # Use ego-motion head
   semantic: True # Use background segmentation head
   clustering: True # Use foreground clustering head
-  loop_ego: False
+  loop_ego: True
 
 misc:
   run_mode: train # Mode to run the network in

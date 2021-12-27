@@ -492,7 +492,7 @@ class EgoMotionHeadLoop(EgoMotionHead):
     def forward(self, score_matrix, mask, xyz_s, xyz_t):
         R_est_s, t_est_s, perm_matrix_s=self.getOneTransformation(score_matrix, mask, xyz_s, xyz_t)
         
-        R_est_t, t_est_t, perm_matrix_t=self.getOneTransformation(score_matrix.T, mask.T, xyz_t, xyz_s)
+        R_est_t, t_est_t, perm_matrix_t=self.getOneTransformation(score_matrix.transpose(1,2), mask.transpose(1,2), xyz_t, xyz_s)
 
         R_est = [R_est_s,R_est_t]
         t_est = [t_est_s,t_est_t]

@@ -135,8 +135,10 @@ class TrainLoss(nn.Module):
             pc_s_est = torch.cat(pc_s_est, 0)
             pc_s_gt = torch.cat(pc_s_gt, 0)
 
-            losses['ego_loss'] += self.ego_l1_criterion(pc_s_est, pc_s_gt) * self.args['loss'].get('ego_loss_w', 1.0)
-            losses['outlier_loss'] += self.ego_outlier_criterion(inferred_values['permutation_t']) * self.args['loss'].get('inlier_loss_w', 1.0)
+            losses['ego_loss']*=0.5
+            losses['outlier_loss']*=0.5
+            losses['ego_loss'] += 0.5*self.ego_l1_criterion(pc_s_est, pc_s_gt) * self.args['loss'].get('ego_loss_w', 1.0)
+            losses['outlier_loss'] += 0.5*self.ego_outlier_criterion(inferred_values['permutation_t']) * self.args['loss'].get('inlier_loss_w', 1.0)
 ###########################################################################################
 
         # Background segmentation loss
