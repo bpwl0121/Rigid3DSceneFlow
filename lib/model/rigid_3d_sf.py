@@ -22,7 +22,9 @@ class MinkowskiFlow(nn.Module):
         self.normalize_feature  = args['network']['normalize_features']
         self.test_flag = True if args['misc']['run_mode'] == 'test' else False
 
+        ########## new attributes for
         self.loop_ego = args['method']['loop_ego']
+        self.loop_flow = args['method']['loop_flow']
 
         if self.test_flag:
             self.postprocess_ego = args['test']['postprocess_ego']
@@ -153,6 +155,84 @@ class MinkowskiFlow(nn.Module):
 
         self.inferred_values['refined_flow'] = refined_flow.F
 
+    ##################################################################
+    def _infer_flow_loop(self, flow_f_1, flow_f_2):
+        
+        # Normalize the features
+        if self.normalize_feature:
+            flow_f_1= ME.SparseTensor(
+                        flow_f_1.F / torch.norm(flow_f_1.F, p=2, dim=1, keepdim=True),
+                        coordinate_map_key=flow_f_1.coordinate_map_key,
+                        coordinate_manager=flow_f_1.coordinate_manager)
+
+            flow_f_2= ME.SparseTensor(
+                        flow_f_2.F / torch.norm(flow_f_2.F, p=2, dim=1, keepdim=True),
+                        coordinate_map_key=flow_f_2.coordinate_map_key,
+                        coordinate_manager=flow_f_2.coordinate_manager)
+
+        # Extract the coarse flow based on the feature correspondences
+        coarse_flow = []
+        coarse_flow_t = []
+
+        # Iterate over the examples in the batch
+        # https://github.com/NVIDIA/MinkowskiEngine/blob/8a9dae528f47e33d6f48820cbdfe6f8e7fab12ef/MinkowskiEngine/MinkowskiTensor.py#L309
+        for b_idx in range(len(flow_f_1.decomposed_coordinates)):
+            # flow_f_1 is ME.SparseTensor, flow_f_1.F:features, flow_f_1.C:coordinates
+            feat_s = flow_f_1.F[flow_f_1.C[:,0] == b_idx]
+            feat_t = flow_f_2.F[flow_f_2.C[:,0] == b_idx]
+
+            coor_s = flow_f_1.C[flow_f_1.C[:,0] == b_idx,1:].to(self.device) * self.voxel_size
+            coor_t = flow_f_2.C[flow_f_2.C[:,0] == b_idx,1:].to(self.device) * self.voxel_size
+
+
+            # Squared l2 distance between points points of both point clouds
+            coor_s, coor_t = coor_s.unsqueeze(0), coor_t.unsqueeze(0)
+            feat_s, feat_t = feat_s.unsqueeze(0), feat_t.unsqueeze(0)
+            
+            # Force transport to be zero for points further than 10 m apart
+            support = (pairwise_distance(coor_s, coor_t, normalized=False ) < 10**2).float()
+
+            # Transport cost matrix, size [1, n, m], since the in the for loop with b_idx(batch)
+            # features dimension 128, the number of points is below 8192
+            C = pairwise_distance(feat_s, feat_t)
+            # size [1, n, m]
+            K = torch.exp(-C / (torch.exp(self.epsilon) + self.tau_offset)) * support      
+            # size [1, n, 1]
+            row_sum  = K.sum(-1, keepdim=True)
+            # Estimate flow  [1, n, m]@[1, m, co] -> [1, n, co], co: dimension of coordinate
+            corr_flow = (K  @ coor_t) / (row_sum + 1e-8) - coor_s
+            
+            coarse_flow.append(corr_flow.squeeze(0))
+
+            # back flow
+            C_t = C.transpose(1, 2)
+            K_t = K.transpose(1, 2)
+            row_sum_t  = K_t.sum(-1, keepdim=True)
+            corr_flow_t = (K_t  @ coor_s) / (row_sum_t + 1e-8) - coor_t
+
+            coarse_flow_t.append(corr_flow_t.squeeze(0))
+        
+
+        # coarse_flow stack as coor_s like [batchsize*n,co] due to the ME sparse tensor
+        coarse_flow = torch.cat(coarse_flow,dim=0)
+        st_cf = ME.SparseTensor(features=coarse_flow, 
+                                coordinate_manager=flow_f_1.coordinate_manager, 
+                                coordinate_map_key=flow_f_1.coordinate_map_key)   
+        self.inferred_values['coarse_flow'] = st_cf.F
+        # Refine the flow with the second network
+        refined_flow  = self.flow_refiner(st_cf)
+        self.inferred_values['refined_flow'] = refined_flow.F
+
+
+        coarse_flow_t = torch.cat(coarse_flow_t,dim=0)
+        st_cf_t = ME.SparseTensor(features=coarse_flow_t, 
+                        coordinate_manager=flow_f_2.coordinate_manager, 
+                        coordinate_map_key=flow_f_2.coordinate_map_key)    
+        self.inferred_values['coarse_flow_t'] = st_cf_t.F
+        # Refine the flow with the second network
+        refined_flow_t  = self.flow_refiner(st_cf_t)
+        self.inferred_values['refined_flow_t'] = refined_flow_t.F
+    ###################################################################
 
 
     # sem_label_s,  sem_label_t GT for training, prediction for test
@@ -426,8 +506,11 @@ class MinkowskiFlow(nn.Module):
 
         # Rune the scene flow head
         # get the flow: self.inferred_values['refined_flow'] = refined_flow.F
-        if self.estimate_flow:            
-            self._infer_flow(dec_feat_1, dec_feat_2)
+        if self.estimate_flow:    
+            if self.loop_flow:
+                self._infer_flow_loop(dec_feat_1, dec_feat_2)
+            else:
+                self._infer_flow(dec_feat_1, dec_feat_2)
 
         # Rune the ego-motion head
         if self.estimate_ego:
@@ -534,6 +617,19 @@ class MinkowskiFlow(nn.Module):
             upsampled_voxel_flow =  upsample_flow(xyz_1, refined_voxel_flow, k_value=self.upsampling_k, voxel_size=self.voxel_size)
             # self.inferred_values['refined_rigid_flow'] is upsampled
             self.inferred_values['refined_rigid_flow'] = torch.cat(upsampled_voxel_flow, dim=0)
+
+        #####################################################################
+        if self.loop_flow:
+            # Finally we upsample the voxel flow to the actuall raw points 
+            refined_voxel_flow_t = ME.SparseTensor(features=self.inferred_values['refined_flow_t'], 
+                            coordinate_manager=dec_feat_2.coordinate_manager, 
+                            coordinate_map_key=dec_feat_2.coordinate_map_key)
+
+            # Interpolate the flow from the voxels to the continuos coordinates on the coarse level and upsample the labels
+            upsampled_voxel_flow_t =  upsample_flow(xyz_2, refined_voxel_flow_t, k_value=self.upsampling_k, voxel_size=self.voxel_size)
+            # self.inferred_values['refined_rigid_flow'] is upsampled
+            self.inferred_values['refined_rigid_flow_t'] = torch.cat(upsampled_voxel_flow_t, dim=0)
+        ###########################################################
 
         if self.estimate_semantic:
             upsampled_seg_labels =  upsample_bckg_labels(xyz_1, self.inferred_values['semantic_logits_s'],  voxel_size=self.voxel_size)

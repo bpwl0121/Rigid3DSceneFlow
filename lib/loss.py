@@ -104,7 +104,7 @@ class TrainLoss(nn.Module):
             losses['ego_loss'] = self.ego_l1_criterion(pc_t_est, pc_t_gt) * self.args['loss'].get('ego_loss_w', 1.0)
             losses['outlier_loss'] = self.ego_outlier_criterion(inferred_values['permutation']) * self.args['loss'].get('inlier_loss_w', 1.0)
 
-###################################################################################
+        ###################################################################################
         if self.args['method']['ego_motion'] and self.args['loss']['ego_loss'] and self.args['method']['loop_ego']:
             assert (('R_est' in inferred_values) & ('R_s_t' in gt_data) is not None), "Ego motion loss selected \
                                             but either est or gt ego motion not provided"
@@ -139,7 +139,7 @@ class TrainLoss(nn.Module):
             losses['outlier_loss']*=0.5
             losses['ego_loss'] += 0.5*self.ego_l1_criterion(pc_s_est, pc_s_gt) * self.args['loss'].get('ego_loss_w', 1.0)
             losses['outlier_loss'] += 0.5*self.ego_outlier_criterion(inferred_values['permutation_t']) * self.args['loss'].get('inlier_loss_w', 1.0)
-###########################################################################################
+        ###########################################################################################
 
         # Background segmentation loss
         # for weakly training, both True
@@ -200,7 +200,14 @@ class TrainLoss(nn.Module):
                     dist1 = torch.clamp(torch.sqrt(dist1), max=1.0)
                     dist2 = torch.clamp(torch.sqrt(dist2), max=1.0)
 
-                    chamfer_loss.append((torch.mean(dist1) + torch.mean(dist2)) / 2.0)
+                    if self.args['method']['loop_flow']:
+                        foreground_flow_t = inferred_values['refined_rigid_flow_t'][prev_idx_t: prev_idx_t + gt_data['len_batch'][batch_idx][1],:]
+                        foreground_flow_t = foreground_flow_t[temp_foreground_mask_t,:]
+                        dist3, dist4 = self.chamfer_criterion(foreground_xyz_s.unsqueeze(0), (foreground_xyz_t + foreground_flow_t).unsqueeze(0))
+                        curr_chamfer_loss=(torch.mean(dist1) + torch.mean(dist2) + torch.mean(dist3) + torch.mean(dist4)) / 4.0
+                        chamfer_loss.append(curr_chamfer_loss)
+                    else:
+                        chamfer_loss.append((torch.mean(dist1) + torch.mean(dist2)) / 2.0)
 
                 prev_idx_s += gt_data['len_batch'][batch_idx][0]
                 prev_idx_t += gt_data['len_batch'][batch_idx][1]
@@ -234,6 +241,36 @@ class TrainLoss(nn.Module):
 
             n_clusters = 1.0 if n_clusters == 0 else n_clusters            
             losses['rigidity_loss'] = (rigidity_loss / n_clusters) * self.args['loss'].get('rigid_loss_w', 1.0)
+
+            #############################################################################
+            rigidity_loss = torch.tensor(0.0).to(self.device)
+            if self.args['method']['loop_flow']:
+                # Rigidity loss (flow vectors of each cluster should be congruent)
+                n_clusters = 0
+                # Iterate over the clusters and enforce rigidity within each cluster
+                for batch_idx in inferred_values['clusters_t']:
+            
+                    for cluster in inferred_values['clusters_t'][batch_idx]:
+                        cluster_xyz_t = xyz_t[cluster,:].unsqueeze(0)
+                        cluster_flow = inferred_values['refined_rigid_flow_t'][cluster,:].unsqueeze(0)
+                        reconstructed_xyz = cluster_xyz_t + cluster_flow
+
+                        # Compute the unweighted Kabsch estimation (transformation parameters which best explain the vectors)
+                        # obtain the rigid transformation through flow
+                        R_cluster, t_cluster, _, _ = kabsch_transformation_estimation(cluster_xyz_t, reconstructed_xyz)
+
+                        # Detach the gradients such that they do not flow through the tansformation parameters but only through flow
+                        rigid_xyz = (torch.matmul(R_cluster, cluster_xyz_t.transpose(1, 2)) + t_cluster ).detach().squeeze(0).transpose(0,1)
+                        
+                        # apply transformation for pc1, l1 loss between transformed pc1 and pc1+flow
+                        rigidity_loss += self.rigidity_criterion(reconstructed_xyz.squeeze(0), rigid_xyz)
+
+                        n_clusters += 1
+
+                n_clusters = 1.0 if n_clusters == 0 else n_clusters      
+                losses['rigidity_loss']*=0.5   
+                losses['rigidity_loss'] += 0.5*(rigidity_loss / n_clusters) * self.args['loss'].get('rigid_loss_w', 1.0)
+            #####################################################################################
 
         # Compute the total loss as the sum of individual losses
         total_loss = 0.0
