@@ -306,7 +306,7 @@ class EgoMotionHead(nn.Module):
     Class defining EgoMotionHead
     """
 
-    def __init__(self, add_slack=True, sinkhorn_iter=5):
+    def __init__(self, add_slack=True, sinkhorn_iter=5, umeyama=False):
         nn.Module.__init__(self)
 
         self.slack = add_slack
@@ -317,6 +317,8 @@ class EgoMotionHead(nn.Module):
         self.alpha = torch.nn.Parameter(torch.tensor(-5.0))
 
         self.softplus = torch.nn.Softplus()
+
+        self.umeyama = umeyama
 
 
     # not in use
@@ -412,8 +414,11 @@ class EgoMotionHead(nn.Module):
 
         # Compute transform and transform points
         #transform = self.compute_rigid_transform(xyz_s, weighted_t, weights=torch.sum(perm_matrix, dim=2))
-        #R_est, t_est, _, _ = kabsch_transformation_estimation(xyz_s, weighted_t, weights=torch.sum(perm_matrix, dim=2))
-        R_est, t_est= umeyama_transformation_estimation(xyz_s, weighted_t)
+        if self.umeyama:
+            R_est, t_est = umeyama_transformation_estimation(xyz_s, weighted_t)
+        else:
+            R_est, t_est, _, _ = kabsch_transformation_estimation(xyz_s, weighted_t, weights=torch.sum(perm_matrix, dim=2))
+        
         return R_est, t_est, perm_matrix
 
 

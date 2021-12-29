@@ -76,7 +76,7 @@ class MinkowskiFlow(nn.Module):
                                                    sinkhorn_iter=self.sinkhorn_iter)
             else:
                 self.ego_motion_decoder = EgoMotionHead(add_slack=self.add_slack,
-                                                   sinkhorn_iter=self.sinkhorn_iter)
+                                                   sinkhorn_iter=self.sinkhorn_iter,umeyama=args['method']['umeyama'])
         
         # Initialize the foreground clustering head
         if args['method']['clustering']:
