@@ -6,6 +6,7 @@ import math
 from collections import defaultdict
 
 import open3d as o3d
+from pytorch3d.ops import corresponding_points_alignment
 import numpy as np
 
 from matplotlib import pyplot as plt
@@ -278,7 +279,7 @@ def translation_error(t1, t2):
     return torch.norm(t1-t2, dim=(1, 2))
 
 def umeyama_transformation_estimation(x1, x2):
-    rotation_matrix, translation_matrix = o3d.ops.corresponding_points_alignment(x1, x2)
+    rotation_matrix, translation_matrix,_ = corresponding_points_alignment(x1, x2)
     translation_matrix = torch.unsqueeze(translation_matrix, 2)
 
     return rotation_matrix, translation_matrix

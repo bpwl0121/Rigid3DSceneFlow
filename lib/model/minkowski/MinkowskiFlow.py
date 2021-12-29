@@ -412,8 +412,8 @@ class EgoMotionHead(nn.Module):
 
         # Compute transform and transform points
         #transform = self.compute_rigid_transform(xyz_s, weighted_t, weights=torch.sum(perm_matrix, dim=2))
-        R_est, t_est, _, _ = kabsch_transformation_estimation(xyz_s, weighted_t, weights=torch.sum(perm_matrix, dim=2))
-        #R_est, t_est, _, _ = umeyama_transformation_estimation(xyz_s, weighted_t, weights=torch.sum(perm_matrix, dim=2))
+        #R_est, t_est, _, _ = kabsch_transformation_estimation(xyz_s, weighted_t, weights=torch.sum(perm_matrix, dim=2))
+        R_est, t_est= umeyama_transformation_estimation(xyz_s, weighted_t)
         return R_est, t_est, perm_matrix
 
 
