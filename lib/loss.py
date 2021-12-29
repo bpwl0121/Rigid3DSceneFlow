@@ -200,12 +200,18 @@ class TrainLoss(nn.Module):
                     dist1 = torch.clamp(torch.sqrt(dist1), max=1.0)
                     dist2 = torch.clamp(torch.sqrt(dist2), max=1.0)
 
+                    #########################################################
                     if self.args['method']['loop_flow']:
                         foreground_flow_t = inferred_values['refined_rigid_flow_t'][prev_idx_t: prev_idx_t + gt_data['len_batch'][batch_idx][1],:]
                         foreground_flow_t = foreground_flow_t[temp_foreground_mask_t,:]
                         dist3, dist4 = self.chamfer_criterion(foreground_xyz_s.unsqueeze(0), (foreground_xyz_t + foreground_flow_t).unsqueeze(0))
+
+                        dist3 = torch.clamp(torch.sqrt(dist3), max=1.0)
+                        dist4 = torch.clamp(torch.sqrt(dist4), max=1.0)
+                        
                         curr_chamfer_loss=(torch.mean(dist1) + torch.mean(dist2) + torch.mean(dist3) + torch.mean(dist4)) / 4.0
                         chamfer_loss.append(curr_chamfer_loss)
+                    ########################################################
                     else:
                         chamfer_loss.append((torch.mean(dist1) + torch.mean(dist2)) / 2.0)
 
