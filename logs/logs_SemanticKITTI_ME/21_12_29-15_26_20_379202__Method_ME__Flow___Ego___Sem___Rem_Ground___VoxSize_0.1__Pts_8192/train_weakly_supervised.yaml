@@ -1,0 +1,76 @@
+data:
+  augment_data: true
+  dataset: SemanticKITTI_ME
+  input_features: absolute_coords
+  n_classes: 2
+  only_near_points: true
+  remove_ground: true
+  root: ./data/semantic_kitti/
+loss:
+  background_loss: true
+  bg_loss_w: 1.0
+  cd_loss_w: 0.5
+  ego_loss: true
+  ego_loss_w: 1.0
+  fg_loss_w: 1.0
+  flow_loss: false
+  flow_loss_w: 1.0
+  foreground_loss: true
+  inlier_loss_w: 0.005
+  rigid_loss_w: 1.0
+method:
+  backbone: ME
+  clustering: true
+  ego_motion: true
+  flow: true
+  loop_ego: false
+  loop_flow: true
+  semantic: true
+metrics:
+  ego_motion: true
+  flow: false
+  semantic: true
+misc:
+  log_dir: ./logs/
+  num_points: 8192
+  run_mode: train
+  trainer: FlowTrainer
+  use_gpu: true
+  voxel_size: 0.1
+network:
+  add_slack: true
+  cluster_metric: euclidean
+  ego_motion_points: 1024
+  eps_dbscan: 0.75
+  feature_dim: 64
+  in_kernel_size: 7
+  min_p_cluster: 30
+  min_samples_dbscan: 5
+  norm_type: IN
+  normalize_features: true
+  pretrained_path: ''
+  sinkhorn_iter: 3
+  use_pretrained: true
+optimizer:
+  alg: Adam
+  exp_gamma: 0.98
+  learning_rate: 0.001
+  momentum: 0.8
+  scheduler: ExponentialLR
+  weight_decay: 0.0
+test:
+  batch_size: 1
+  num_workers: 1
+  results_dir: ./eval/
+train:
+  acc_iter_size: 1
+  batch_size: 6
+  chkpt_interval: -1
+  max_epoch: 39
+  num_workers: 6
+  stat_interval: 20
+  val_interval: -1
+  weighted_seg_loss: true
+val:
+  batch_size: 6
+  num_workers: 6
