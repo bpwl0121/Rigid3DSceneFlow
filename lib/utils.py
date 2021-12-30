@@ -278,8 +278,8 @@ def translation_error(t1, t2):
     """
     return torch.norm(t1-t2, dim=(1, 2))
 
-def umeyama_transformation_estimation(x1, x2):
-    rotation_matrix, translation_matrix,_ = corresponding_points_alignment(x1, x2)
+def umeyama_transformation_estimation(x1, x2, weights=None):
+    rotation_matrix, translation_matrix,_ = corresponding_points_alignment(x1, x2,weights=weights)
     translation_matrix = torch.unsqueeze(translation_matrix, 2)
 
     return rotation_matrix, translation_matrix
