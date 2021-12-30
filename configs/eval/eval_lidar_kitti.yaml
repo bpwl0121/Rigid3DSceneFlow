@@ -4,8 +4,9 @@ method:
   ego_motion: True # Use ego-motion head
   semantic: True # Use background segmentation head
   clustering: True # Use foreground clustering head
-  loop_ego: True
-  loop_flow: True
+  loop_ego: False
+  loop_flow: False
+  umeyama: True
 
 misc:
   run_mode: test # Mode to run the network in
