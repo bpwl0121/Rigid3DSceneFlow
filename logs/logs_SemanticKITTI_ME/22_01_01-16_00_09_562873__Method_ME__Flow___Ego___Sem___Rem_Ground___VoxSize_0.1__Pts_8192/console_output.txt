@@ -1,0 +1,501 @@
+2022-01-01 16:00:09,564 [INFO] root - Command: train.py ./configs/train/train_weakly_supervised.yaml
+2022-01-01 16:00:09,564 [INFO] root - Arguments: method_backbone: ME, method_flow: True, method_ego_motion: True, method_semantic: True, method_clustering: True, method_loop_ego: False, method_loop_flow: False, method_umeyama: False, misc_voxel_size: 0.1, misc_num_points: 8192, misc_trainer: FlowTrainer, misc_use_gpu: True, misc_log_dir: ./logs/, misc_run_mode: train, data_input_features: absolute_coords, data_only_near_points: True, data_dataset: SemanticKITTI_ME, data_root: ./data/semantic_kitti/, data_n_classes: 2, data_remove_ground: True, data_augment_data: True, train_batch_size: 6, train_acc_iter_size: 1, train_num_workers: 6, train_max_epoch: 39, train_stat_interval: 20, train_chkpt_interval: -1, train_val_interval: -1, train_weighted_seg_loss: True, val_batch_size: 6, val_num_workers: 6, test_results_dir: ./eval/, test_batch_size: 1, test_num_workers: 1, loss_bg_loss_w: 1.0, loss_fg_loss_w: 1.0, loss_flow_loss_w: 1.0, loss_ego_loss_w: 1.0, loss_inlier_loss_w: 0.005, loss_cd_loss_w: 0.5, loss_rigid_loss_w: 1.0, loss_background_loss: True, loss_flow_loss: False, loss_ego_loss: True, loss_foreground_loss: True, optimizer_alg: Adam, optimizer_learning_rate: 0.001, optimizer_weight_decay: 0.0, optimizer_momentum: 0.8, optimizer_scheduler: ExponentialLR, optimizer_exp_gamma: 0.98, network_normalize_features: True, network_norm_type: IN, network_in_kernel_size: 7, network_feature_dim: 64, network_ego_motion_points: 1024, network_add_slack: True, network_sinkhorn_iter: 3, network_use_pretrained: True, network_cluster_metric: euclidean, network_min_p_cluster: 30, network_min_samples_dbscan: 5, network_eps_dbscan: 0.75, network_pretrained_path: , metrics_flow: False, metrics_ego_motion: True, metrics_semantic: True
+2022-01-01 16:00:09,564 [INFO] root - Output and logs will be saved to ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192
+2022-01-01 16:00:09,566 [INFO] root - Parameter Count: 8078149
+2022-01-01 16:00:09,566 [INFO] root - Torch version: 1.7.1+cu110
+2022-01-01 16:00:09,566 [INFO] root - CUDA version: 11.0
+2022-01-01 16:00:09,575 [INFO] root - Training epoch: 0, LR: [0.001] 
+2022-01-01 16:00:54,089 [INFO] root - Epoch 0 - It. 19: loss = 1.501
+2022-01-01 16:01:37,937 [INFO] root - Epoch 0 - It. 39: loss = 1.301
+2022-01-01 16:02:21,397 [INFO] root - Epoch 0 - It. 59: loss = 1.243
+2022-01-01 16:03:04,819 [INFO] root - Epoch 0 - It. 79: loss = 1.170
+2022-01-01 16:03:48,297 [INFO] root - Epoch 0 - It. 99: loss = 1.157
+2022-01-01 16:04:31,018 [INFO] root - Epoch 0 - It. 119: loss = 1.096
+2022-01-01 16:05:14,798 [INFO] root - Epoch 0 - It. 139: loss = 1.003
+2022-01-01 16:05:51,561 [INFO] root - Starting the validation
+2022-01-01 16:06:33,164 [INFO] root - VALIDATION -It. 156: total loss: 0.850.
+2022-01-01 16:06:33,165 [INFO] root - New best model (loss: 0.8502)
+2022-01-01 16:06:33,166 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_best.pt ...
+2022-01-01 16:06:33,334 [INFO] root - Training epoch: 1, LR: [0.00098] 
+2022-01-01 16:06:40,581 [INFO] root - Epoch 1 - It. 159: loss = 0.900
+2022-01-01 16:07:23,917 [INFO] root - Epoch 1 - It. 179: loss = 0.872
+2022-01-01 16:08:07,579 [INFO] root - Epoch 1 - It. 199: loss = 0.801
+2022-01-01 16:08:51,525 [INFO] root - Epoch 1 - It. 219: loss = 0.761
+2022-01-01 16:09:34,884 [INFO] root - Epoch 1 - It. 239: loss = 0.715
+2022-01-01 16:10:18,071 [INFO] root - Epoch 1 - It. 259: loss = 0.699
+2022-01-01 16:11:01,212 [INFO] root - Epoch 1 - It. 279: loss = 0.684
+2022-01-01 16:11:45,183 [INFO] root - Epoch 1 - It. 299: loss = 0.680
+2022-01-01 16:12:15,417 [INFO] root - Starting the validation
+2022-01-01 16:12:57,557 [INFO] root - VALIDATION -It. 313: total loss: 0.615.
+2022-01-01 16:12:57,558 [INFO] root - New best model (loss: 0.6151)
+2022-01-01 16:12:57,559 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_best.pt ...
+2022-01-01 16:12:58,036 [INFO] root - Training epoch: 2, LR: [0.0009603999999999999] 
+2022-01-01 16:13:12,226 [INFO] root - Epoch 2 - It. 319: loss = 0.675
+2022-01-01 16:13:54,879 [INFO] root - Epoch 2 - It. 339: loss = 0.671
+2022-01-01 16:14:37,834 [INFO] root - Epoch 2 - It. 359: loss = 0.645
+2022-01-01 16:15:21,864 [INFO] root - Epoch 2 - It. 379: loss = 0.600
+2022-01-01 16:16:05,351 [INFO] root - Epoch 2 - It. 399: loss = 0.576
+2022-01-01 16:16:48,757 [INFO] root - Epoch 2 - It. 419: loss = 0.574
+2022-01-01 16:17:32,761 [INFO] root - Epoch 2 - It. 439: loss = 0.571
+2022-01-01 16:18:16,140 [INFO] root - Epoch 2 - It. 459: loss = 0.562
+2022-01-01 16:18:39,874 [INFO] root - Starting the validation
+2022-01-01 16:19:21,533 [INFO] root - VALIDATION -It. 470: total loss: 0.521.
+2022-01-01 16:19:21,534 [INFO] root - New best model (loss: 0.5212)
+2022-01-01 16:19:21,535 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_best.pt ...
+2022-01-01 16:19:22,000 [INFO] root - Training epoch: 3, LR: [0.0009411919999999999] 
+2022-01-01 16:19:42,331 [INFO] root - Epoch 3 - It. 479: loss = 0.579
+2022-01-01 16:20:25,832 [INFO] root - Epoch 3 - It. 499: loss = 0.530
+2022-01-01 16:21:08,563 [INFO] root - Epoch 3 - It. 519: loss = 0.593
+2022-01-01 16:21:52,049 [INFO] root - Epoch 3 - It. 539: loss = 0.531
+2022-01-01 16:22:35,626 [INFO] root - Epoch 3 - It. 559: loss = 0.574
+2022-01-01 16:23:19,446 [INFO] root - Epoch 3 - It. 579: loss = 0.507
+2022-01-01 16:24:02,729 [INFO] root - Epoch 3 - It. 599: loss = 0.534
+2022-01-01 16:24:46,269 [INFO] root - Epoch 3 - It. 619: loss = 0.534
+2022-01-01 16:25:04,004 [INFO] root - Starting the validation
+2022-01-01 16:25:46,017 [INFO] root - VALIDATION -It. 627: total loss: 0.498.
+2022-01-01 16:25:46,018 [INFO] root - New best model (loss: 0.4977)
+2022-01-01 16:25:46,019 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_best.pt ...
+2022-01-01 16:25:46,505 [INFO] root - Training epoch: 4, LR: [0.0009223681599999998] 
+2022-01-01 16:26:13,746 [INFO] root - Epoch 4 - It. 639: loss = 0.526
+2022-01-01 16:26:57,436 [INFO] root - Epoch 4 - It. 659: loss = 0.529
+2022-01-01 16:27:41,454 [INFO] root - Epoch 4 - It. 679: loss = 0.503
+2022-01-01 16:28:24,152 [INFO] root - Epoch 4 - It. 699: loss = 0.500
+2022-01-01 16:29:07,402 [INFO] root - Epoch 4 - It. 719: loss = 0.505
+2022-01-01 16:29:49,299 [INFO] root - Epoch 4 - It. 739: loss = 0.524
+2022-01-01 16:30:32,974 [INFO] root - Epoch 4 - It. 759: loss = 0.502
+2022-01-01 16:31:16,029 [INFO] root - Epoch 4 - It. 779: loss = 0.460
+2022-01-01 16:31:26,839 [INFO] root - Starting the validation
+2022-01-01 16:32:08,376 [INFO] root - VALIDATION -It. 784: total loss: 0.484.
+2022-01-01 16:32:08,377 [INFO] root - New best model (loss: 0.4838)
+2022-01-01 16:32:08,378 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_best.pt ...
+2022-01-01 16:32:08,857 [INFO] root - Training epoch: 5, LR: [0.0009039207967999998] 
+2022-01-01 16:32:41,808 [INFO] root - Epoch 5 - It. 799: loss = 0.478
+2022-01-01 16:33:24,873 [INFO] root - Epoch 5 - It. 819: loss = 0.502
+2022-01-01 16:34:08,269 [INFO] root - Epoch 5 - It. 839: loss = 0.486
+2022-01-01 16:34:51,141 [INFO] root - Epoch 5 - It. 859: loss = 0.515
+2022-01-01 16:35:34,005 [INFO] root - Epoch 5 - It. 879: loss = 0.502
+2022-01-01 16:36:17,827 [INFO] root - Epoch 5 - It. 899: loss = 0.488
+2022-01-01 16:37:01,009 [INFO] root - Epoch 5 - It. 919: loss = 0.464
+2022-01-01 16:37:43,771 [INFO] root - Epoch 5 - It. 939: loss = 0.442
+2022-01-01 16:37:48,288 [INFO] root - Starting the validation
+2022-01-01 16:38:29,914 [INFO] root - VALIDATION -It. 941: total loss: 0.467.
+2022-01-01 16:38:29,916 [INFO] root - New best model (loss: 0.4674)
+2022-01-01 16:38:29,917 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_best.pt ...
+2022-01-01 16:38:30,398 [INFO] root - Training epoch: 6, LR: [0.0008858423808639998] 
+2022-01-01 16:39:10,718 [INFO] root - Epoch 6 - It. 959: loss = 0.468
+2022-01-01 16:39:54,296 [INFO] root - Epoch 6 - It. 979: loss = 0.425
+2022-01-01 16:40:37,613 [INFO] root - Epoch 6 - It. 999: loss = 0.482
+2022-01-01 16:41:20,837 [INFO] root - Epoch 6 - It. 1019: loss = 0.434
+2022-01-01 16:42:04,023 [INFO] root - Epoch 6 - It. 1039: loss = 0.427
+2022-01-01 16:42:47,414 [INFO] root - Epoch 6 - It. 1059: loss = 0.436
+2022-01-01 16:43:30,467 [INFO] root - Epoch 6 - It. 1079: loss = 0.472
+2022-01-01 16:44:11,031 [INFO] root - Starting the validation
+2022-01-01 16:44:52,450 [INFO] root - VALIDATION -It. 1098: total loss: 0.457.
+2022-01-01 16:44:52,452 [INFO] root - New best model (loss: 0.4567)
+2022-01-01 16:44:52,453 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_best.pt ...
+2022-01-01 16:44:52,926 [INFO] root - Training epoch: 7, LR: [0.0008681255332467198] 
+2022-01-01 16:44:55,874 [INFO] root - Epoch 7 - It. 1099: loss = 0.494
+2022-01-01 16:45:39,514 [INFO] root - Epoch 7 - It. 1119: loss = 0.423
+2022-01-01 16:46:22,693 [INFO] root - Epoch 7 - It. 1139: loss = 0.431
+2022-01-01 16:47:04,737 [INFO] root - Epoch 7 - It. 1159: loss = 0.473
+2022-01-01 16:47:48,274 [INFO] root - Epoch 7 - It. 1179: loss = 0.431
+2022-01-01 16:48:31,650 [INFO] root - Epoch 7 - It. 1199: loss = 0.418
+2022-01-01 16:49:14,703 [INFO] root - Epoch 7 - It. 1219: loss = 0.406
+2022-01-01 16:49:57,597 [INFO] root - Epoch 7 - It. 1239: loss = 0.438
+2022-01-01 16:50:31,995 [INFO] root - Starting the validation
+2022-01-01 16:51:13,441 [INFO] root - VALIDATION -It. 1255: total loss: 0.426.
+2022-01-01 16:51:13,443 [INFO] root - New best model (loss: 0.4261)
+2022-01-01 16:51:13,444 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_best.pt ...
+2022-01-01 16:51:13,921 [INFO] root - Training epoch: 8, LR: [0.0008507630225817853] 
+2022-01-01 16:51:23,339 [INFO] root - Epoch 8 - It. 1259: loss = 0.420
+2022-01-01 16:52:06,289 [INFO] root - Epoch 8 - It. 1279: loss = 0.423
+2022-01-01 16:52:49,602 [INFO] root - Epoch 8 - It. 1299: loss = 0.410
+2022-01-01 16:53:34,118 [INFO] root - Epoch 8 - It. 1319: loss = 0.415
+2022-01-01 16:54:17,951 [INFO] root - Epoch 8 - It. 1339: loss = 0.418
+2022-01-01 16:55:01,987 [INFO] root - Epoch 8 - It. 1359: loss = 0.406
+2022-01-01 16:55:44,749 [INFO] root - Epoch 8 - It. 1379: loss = 0.402
+2022-01-01 16:56:28,140 [INFO] root - Epoch 8 - It. 1399: loss = 0.404
+2022-01-01 16:56:56,803 [INFO] root - Starting the validation
+2022-01-01 16:57:38,952 [INFO] root - VALIDATION -It. 1412: total loss: 0.425.
+2022-01-01 16:57:38,953 [INFO] root - New best model (loss: 0.4248)
+2022-01-01 16:57:38,954 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_best.pt ...
+2022-01-01 16:57:39,427 [INFO] root - Training epoch: 9, LR: [0.0008337477621301496] 
+2022-01-01 16:57:55,281 [INFO] root - Epoch 9 - It. 1419: loss = 0.378
+2022-01-01 16:58:38,569 [INFO] root - Epoch 9 - It. 1439: loss = 0.392
+2022-01-01 16:59:22,869 [INFO] root - Epoch 9 - It. 1459: loss = 0.416
+2022-01-01 17:00:07,218 [INFO] root - Epoch 9 - It. 1479: loss = 0.411
+2022-01-01 17:00:50,969 [INFO] root - Epoch 9 - It. 1499: loss = 0.372
+2022-01-01 17:01:34,475 [INFO] root - Epoch 9 - It. 1519: loss = 0.396
+2022-01-01 17:02:18,578 [INFO] root - Epoch 9 - It. 1539: loss = 0.394
+2022-01-01 17:03:01,614 [INFO] root - Epoch 9 - It. 1559: loss = 0.396
+2022-01-01 17:03:22,814 [INFO] root - Starting the validation
+2022-01-01 17:04:05,103 [INFO] root - VALIDATION -It. 1569: total loss: 0.428.
+2022-01-01 17:04:05,105 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_1569.pt ...
+2022-01-01 17:04:05,272 [INFO] root - Training epoch: 10, LR: [0.0008170728068875465] 
+2022-01-01 17:04:27,755 [INFO] root - Epoch 10 - It. 1579: loss = 0.406
+2022-01-01 17:05:10,986 [INFO] root - Epoch 10 - It. 1599: loss = 0.394
+2022-01-01 17:05:54,646 [INFO] root - Epoch 10 - It. 1619: loss = 0.424
+2022-01-01 17:06:38,646 [INFO] root - Epoch 10 - It. 1639: loss = 0.373
+2022-01-01 17:07:22,392 [INFO] root - Epoch 10 - It. 1659: loss = 0.413
+2022-01-01 17:08:06,292 [INFO] root - Epoch 10 - It. 1679: loss = 0.394
+2022-01-01 17:08:50,096 [INFO] root - Epoch 10 - It. 1699: loss = 0.376
+2022-01-01 17:09:34,388 [INFO] root - Epoch 10 - It. 1719: loss = 0.367
+2022-01-01 17:09:49,477 [INFO] root - Starting the validation
+2022-01-01 17:10:31,329 [INFO] root - VALIDATION -It. 1726: total loss: 0.410.
+2022-01-01 17:10:31,330 [INFO] root - New best model (loss: 0.4097)
+2022-01-01 17:10:31,331 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_best.pt ...
+2022-01-01 17:10:31,817 [INFO] root - Training epoch: 11, LR: [0.0008007313507497956] 
+2022-01-01 17:11:01,938 [INFO] root - Epoch 11 - It. 1739: loss = 0.392
+2022-01-01 17:11:45,108 [INFO] root - Epoch 11 - It. 1759: loss = 0.381
+2022-01-01 17:12:29,699 [INFO] root - Epoch 11 - It. 1779: loss = 0.371
+2022-01-01 17:13:13,039 [INFO] root - Epoch 11 - It. 1799: loss = 0.359
+2022-01-01 17:13:56,726 [INFO] root - Epoch 11 - It. 1819: loss = 0.390
+2022-01-01 17:14:40,689 [INFO] root - Epoch 11 - It. 1839: loss = 0.350
+2022-01-01 17:15:23,457 [INFO] root - Epoch 11 - It. 1859: loss = 0.368
+2022-01-01 17:16:06,988 [INFO] root - Epoch 11 - It. 1879: loss = 0.371
+2022-01-01 17:16:15,576 [INFO] root - Starting the validation
+2022-01-01 17:16:57,957 [INFO] root - VALIDATION -It. 1883: total loss: 0.385.
+2022-01-01 17:16:57,958 [INFO] root - New best model (loss: 0.3855)
+2022-01-01 17:16:57,959 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_best.pt ...
+2022-01-01 17:16:58,433 [INFO] root - Training epoch: 12, LR: [0.0007847167237347997] 
+2022-01-01 17:17:33,990 [INFO] root - Epoch 12 - It. 1899: loss = 0.388
+2022-01-01 17:18:17,244 [INFO] root - Epoch 12 - It. 1919: loss = 0.349
+2022-01-01 17:19:00,931 [INFO] root - Epoch 12 - It. 1939: loss = 0.335
+2022-01-01 17:19:44,751 [INFO] root - Epoch 12 - It. 1959: loss = 0.350
+2022-01-01 17:20:28,477 [INFO] root - Epoch 12 - It. 1979: loss = 0.350
+2022-01-01 17:21:11,976 [INFO] root - Epoch 12 - It. 1999: loss = 0.368
+2022-01-01 17:21:55,528 [INFO] root - Epoch 12 - It. 2019: loss = 0.358
+2022-01-01 17:22:39,077 [INFO] root - Epoch 12 - It. 2039: loss = 0.345
+2022-01-01 17:22:41,279 [INFO] root - Starting the validation
+2022-01-01 17:23:23,726 [INFO] root - VALIDATION -It. 2040: total loss: 0.384.
+2022-01-01 17:23:23,726 [INFO] root - New best model (loss: 0.3838)
+2022-01-01 17:23:23,727 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_best.pt ...
+2022-01-01 17:23:24,205 [INFO] root - Training epoch: 13, LR: [0.0007690223892601037] 
+2022-01-01 17:24:06,035 [INFO] root - Epoch 13 - It. 2059: loss = 0.352
+2022-01-01 17:24:49,578 [INFO] root - Epoch 13 - It. 2079: loss = 0.364
+2022-01-01 17:25:32,270 [INFO] root - Epoch 13 - It. 2099: loss = 0.339
+2022-01-01 17:26:16,404 [INFO] root - Epoch 13 - It. 2119: loss = 0.354
+2022-01-01 17:27:00,673 [INFO] root - Epoch 13 - It. 2139: loss = 0.355
+2022-01-01 17:27:44,409 [INFO] root - Epoch 13 - It. 2159: loss = 0.340
+2022-01-01 17:28:28,047 [INFO] root - Epoch 13 - It. 2179: loss = 0.363
+2022-01-01 17:29:07,206 [INFO] root - Starting the validation
+2022-01-01 17:29:49,452 [INFO] root - VALIDATION -It. 2197: total loss: 0.380.
+2022-01-01 17:29:49,454 [INFO] root - New best model (loss: 0.3797)
+2022-01-01 17:29:49,454 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_best.pt ...
+2022-01-01 17:29:49,881 [INFO] root - Training epoch: 14, LR: [0.0007536419414749016] 
+2022-01-01 17:29:54,778 [INFO] root - Epoch 14 - It. 2199: loss = 0.351
+2022-01-01 17:30:38,651 [INFO] root - Epoch 14 - It. 2219: loss = 0.355
+2022-01-01 17:31:22,074 [INFO] root - Epoch 14 - It. 2239: loss = 0.338
+2022-01-01 17:32:05,345 [INFO] root - Epoch 14 - It. 2259: loss = 0.330
+2022-01-01 17:32:48,803 [INFO] root - Epoch 14 - It. 2279: loss = 0.338
+2022-01-01 17:33:32,465 [INFO] root - Epoch 14 - It. 2299: loss = 0.332
+2022-01-01 17:34:16,492 [INFO] root - Epoch 14 - It. 2319: loss = 0.336
+2022-01-01 17:35:00,553 [INFO] root - Epoch 14 - It. 2339: loss = 0.348
+2022-01-01 17:35:33,813 [INFO] root - Starting the validation
+2022-01-01 17:36:16,000 [INFO] root - VALIDATION -It. 2354: total loss: 0.367.
+2022-01-01 17:36:16,002 [INFO] root - New best model (loss: 0.3666)
+2022-01-01 17:36:16,003 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_best.pt ...
+2022-01-01 17:36:16,410 [INFO] root - Training epoch: 15, LR: [0.0007385691026454036] 
+2022-01-01 17:36:28,172 [INFO] root - Epoch 15 - It. 2359: loss = 0.336
+2022-01-01 17:37:12,218 [INFO] root - Epoch 15 - It. 2379: loss = 0.317
+2022-01-01 17:37:55,767 [INFO] root - Epoch 15 - It. 2399: loss = 0.324
+2022-01-01 17:38:39,697 [INFO] root - Epoch 15 - It. 2419: loss = 0.308
+2022-01-01 17:39:24,050 [INFO] root - Epoch 15 - It. 2439: loss = 0.340
+2022-01-01 17:40:07,538 [INFO] root - Epoch 15 - It. 2459: loss = 0.314
+2022-01-01 17:40:50,620 [INFO] root - Epoch 15 - It. 2479: loss = 0.353
+2022-01-01 17:41:34,253 [INFO] root - Epoch 15 - It. 2499: loss = 0.333
+2022-01-01 17:42:00,379 [INFO] root - Starting the validation
+2022-01-01 17:42:42,957 [INFO] root - VALIDATION -It. 2511: total loss: 0.350.
+2022-01-01 17:42:42,958 [INFO] root - New best model (loss: 0.3500)
+2022-01-01 17:42:42,959 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_best.pt ...
+2022-01-01 17:42:43,435 [INFO] root - Training epoch: 16, LR: [0.0007237977205924955] 
+2022-01-01 17:43:02,387 [INFO] root - Epoch 16 - It. 2519: loss = 0.320
+2022-01-01 17:43:46,174 [INFO] root - Epoch 16 - It. 2539: loss = 0.330
+2022-01-01 17:44:29,619 [INFO] root - Epoch 16 - It. 2559: loss = 0.312
+2022-01-01 17:45:13,994 [INFO] root - Epoch 16 - It. 2579: loss = 0.318
+2022-01-01 17:45:57,370 [INFO] root - Epoch 16 - It. 2599: loss = 0.334
+2022-01-01 17:46:40,747 [INFO] root - Epoch 16 - It. 2619: loss = 0.319
+2022-01-01 17:47:24,632 [INFO] root - Epoch 16 - It. 2639: loss = 0.315
+2022-01-01 17:48:07,951 [INFO] root - Epoch 16 - It. 2659: loss = 0.331
+2022-01-01 17:48:27,863 [INFO] root - Starting the validation
+2022-01-01 17:49:10,330 [INFO] root - VALIDATION -It. 2668: total loss: 0.356.
+2022-01-01 17:49:10,332 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_2668.pt ...
+2022-01-01 17:49:10,504 [INFO] root - Training epoch: 17, LR: [0.0007093217661806456] 
+2022-01-01 17:49:35,773 [INFO] root - Epoch 17 - It. 2679: loss = 0.310
+2022-01-01 17:50:19,576 [INFO] root - Epoch 17 - It. 2699: loss = 0.333
+2022-01-01 17:51:03,709 [INFO] root - Epoch 17 - It. 2719: loss = 0.320
+2022-01-01 17:51:47,432 [INFO] root - Epoch 17 - It. 2739: loss = 0.326
+2022-01-01 17:52:31,385 [INFO] root - Epoch 17 - It. 2759: loss = 0.315
+2022-01-01 17:53:14,480 [INFO] root - Epoch 17 - It. 2779: loss = 0.343
+2022-01-01 17:53:58,201 [INFO] root - Epoch 17 - It. 2799: loss = 0.325
+2022-01-01 17:54:41,766 [INFO] root - Epoch 17 - It. 2819: loss = 0.320
+2022-01-01 17:54:55,113 [INFO] root - Starting the validation
+2022-01-01 17:55:37,633 [INFO] root - VALIDATION -It. 2825: total loss: 0.350.
+2022-01-01 17:55:37,634 [INFO] root - New best model (loss: 0.3496)
+2022-01-01 17:55:37,635 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_best.pt ...
+2022-01-01 17:55:38,114 [INFO] root - Training epoch: 18, LR: [0.0006951353308570327] 
+2022-01-01 17:56:09,434 [INFO] root - Epoch 18 - It. 2839: loss = 0.306
+2022-01-01 17:56:53,227 [INFO] root - Epoch 18 - It. 2859: loss = 0.286
+2022-01-01 17:57:37,131 [INFO] root - Epoch 18 - It. 2879: loss = 0.318
+2022-01-01 17:58:20,447 [INFO] root - Epoch 18 - It. 2899: loss = 0.334
+2022-01-01 17:59:04,735 [INFO] root - Epoch 18 - It. 2919: loss = 0.311
+2022-01-01 17:59:48,004 [INFO] root - Epoch 18 - It. 2939: loss = 0.321
+2022-01-01 18:00:31,687 [INFO] root - Epoch 18 - It. 2959: loss = 0.324
+2022-01-01 18:01:15,653 [INFO] root - Epoch 18 - It. 2979: loss = 0.297
+2022-01-01 18:01:22,235 [INFO] root - Starting the validation
+2022-01-01 18:02:04,560 [INFO] root - VALIDATION -It. 2982: total loss: 0.341.
+2022-01-01 18:02:04,562 [INFO] root - New best model (loss: 0.3409)
+2022-01-01 18:02:04,563 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_best.pt ...
+2022-01-01 18:02:05,048 [INFO] root - Training epoch: 19, LR: [0.000681232624239892] 
+2022-01-01 18:02:42,744 [INFO] root - Epoch 19 - It. 2999: loss = 0.300
+2022-01-01 18:03:26,343 [INFO] root - Epoch 19 - It. 3019: loss = 0.291
+2022-01-01 18:04:09,985 [INFO] root - Epoch 19 - It. 3039: loss = 0.297
+2022-01-01 18:04:53,777 [INFO] root - Epoch 19 - It. 3059: loss = 0.290
+2022-01-01 18:05:38,340 [INFO] root - Epoch 19 - It. 3079: loss = 0.308
+2022-01-01 18:06:21,853 [INFO] root - Epoch 19 - It. 3099: loss = 0.308
+2022-01-01 18:07:05,507 [INFO] root - Epoch 19 - It. 3119: loss = 0.297
+2022-01-01 18:07:48,876 [INFO] root - Epoch 19 - It. 3139: loss = 0.315
+2022-01-01 18:07:48,879 [INFO] root - Starting the validation
+2022-01-01 18:08:31,053 [INFO] root - VALIDATION -It. 3139: total loss: 0.356.
+2022-01-01 18:08:31,055 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_3139.pt ...
+2022-01-01 18:08:31,220 [INFO] root - Training epoch: 20, LR: [0.0006676079717550942] 
+2022-01-01 18:09:15,369 [INFO] root - Epoch 20 - It. 3159: loss = 0.305
+2022-01-01 18:09:59,317 [INFO] root - Epoch 20 - It. 3179: loss = 0.299
+2022-01-01 18:10:43,527 [INFO] root - Epoch 20 - It. 3199: loss = 0.310
+2022-01-01 18:11:26,612 [INFO] root - Epoch 20 - It. 3219: loss = 0.291
+2022-01-01 18:12:10,846 [INFO] root - Epoch 20 - It. 3239: loss = 0.282
+2022-01-01 18:12:54,983 [INFO] root - Epoch 20 - It. 3259: loss = 0.285
+2022-01-01 18:13:38,314 [INFO] root - Epoch 20 - It. 3279: loss = 0.308
+2022-01-01 18:14:15,709 [INFO] root - Starting the validation
+2022-01-01 18:14:57,964 [INFO] root - VALIDATION -It. 3296: total loss: 0.334.
+2022-01-01 18:14:57,965 [INFO] root - New best model (loss: 0.3339)
+2022-01-01 18:14:57,965 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_best.pt ...
+2022-01-01 18:14:58,442 [INFO] root - Training epoch: 21, LR: [0.0006542558123199924] 
+2022-01-01 18:15:05,782 [INFO] root - Epoch 21 - It. 3299: loss = 0.298
+2022-01-01 18:15:49,754 [INFO] root - Epoch 21 - It. 3319: loss = 0.278
+2022-01-01 18:16:32,956 [INFO] root - Epoch 21 - It. 3339: loss = 0.301
+2022-01-01 18:17:16,748 [INFO] root - Epoch 21 - It. 3359: loss = 0.275
+2022-01-01 18:18:00,238 [INFO] root - Epoch 21 - It. 3379: loss = 0.292
+2022-01-01 18:18:44,486 [INFO] root - Epoch 21 - It. 3399: loss = 0.276
+2022-01-01 18:19:28,300 [INFO] root - Epoch 21 - It. 3419: loss = 0.286
+2022-01-01 18:20:12,170 [INFO] root - Epoch 21 - It. 3439: loss = 0.301
+2022-01-01 18:20:42,542 [INFO] root - Starting the validation
+2022-01-01 18:21:24,552 [INFO] root - VALIDATION -It. 3453: total loss: 0.346.
+2022-01-01 18:21:24,554 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_3453.pt ...
+2022-01-01 18:21:24,718 [INFO] root - Training epoch: 22, LR: [0.0006411706960735925] 
+2022-01-01 18:21:38,952 [INFO] root - Epoch 22 - It. 3459: loss = 0.284
+2022-01-01 18:22:22,835 [INFO] root - Epoch 22 - It. 3479: loss = 0.290
+2022-01-01 18:23:06,702 [INFO] root - Epoch 22 - It. 3499: loss = 0.290
+2022-01-01 18:23:50,659 [INFO] root - Epoch 22 - It. 3519: loss = 0.278
+2022-01-01 18:24:34,368 [INFO] root - Epoch 22 - It. 3539: loss = 0.293
+2022-01-01 18:25:18,040 [INFO] root - Epoch 22 - It. 3559: loss = 0.310
+2022-01-01 18:26:01,456 [INFO] root - Epoch 22 - It. 3579: loss = 0.286
+2022-01-01 18:26:45,196 [INFO] root - Epoch 22 - It. 3599: loss = 0.276
+2022-01-01 18:27:09,072 [INFO] root - Starting the validation
+2022-01-01 18:27:51,827 [INFO] root - VALIDATION -It. 3610: total loss: 0.340.
+2022-01-01 18:27:51,829 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_3610.pt ...
+2022-01-01 18:27:51,996 [INFO] root - Training epoch: 23, LR: [0.0006283472821521206] 
+2022-01-01 18:28:13,141 [INFO] root - Epoch 23 - It. 3619: loss = 0.278
+2022-01-01 18:28:57,110 [INFO] root - Epoch 23 - It. 3639: loss = 0.261
+2022-01-01 18:29:41,330 [INFO] root - Epoch 23 - It. 3659: loss = 0.272
+2022-01-01 18:30:24,903 [INFO] root - Epoch 23 - It. 3679: loss = 0.276
+2022-01-01 18:31:08,337 [INFO] root - Epoch 23 - It. 3699: loss = 0.285
+2022-01-01 18:31:51,541 [INFO] root - Epoch 23 - It. 3719: loss = 0.282
+2022-01-01 18:32:34,893 [INFO] root - Epoch 23 - It. 3739: loss = 0.279
+2022-01-01 18:33:18,776 [INFO] root - Epoch 23 - It. 3759: loss = 0.269
+2022-01-01 18:33:36,522 [INFO] root - Starting the validation
+2022-01-01 18:34:19,138 [INFO] root - VALIDATION -It. 3767: total loss: 0.295.
+2022-01-01 18:34:19,139 [INFO] root - New best model (loss: 0.2954)
+2022-01-01 18:34:19,140 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_best.pt ...
+2022-01-01 18:34:19,620 [INFO] root - Training epoch: 24, LR: [0.0006157803365090782] 
+2022-01-01 18:34:47,282 [INFO] root - Epoch 24 - It. 3779: loss = 0.262
+2022-01-01 18:35:31,369 [INFO] root - Epoch 24 - It. 3799: loss = 0.273
+2022-01-01 18:36:14,065 [INFO] root - Epoch 24 - It. 3819: loss = 0.273
+2022-01-01 18:36:57,901 [INFO] root - Epoch 24 - It. 3839: loss = 0.282
+2022-01-01 18:37:41,246 [INFO] root - Epoch 24 - It. 3859: loss = 0.282
+2022-01-01 18:38:24,494 [INFO] root - Epoch 24 - It. 3879: loss = 0.301
+2022-01-01 18:39:08,704 [INFO] root - Epoch 24 - It. 3899: loss = 0.278
+2022-01-01 18:39:52,336 [INFO] root - Epoch 24 - It. 3919: loss = 0.275
+2022-01-01 18:40:03,133 [INFO] root - Starting the validation
+2022-01-01 18:40:45,672 [INFO] root - VALIDATION -It. 3924: total loss: 0.309.
+2022-01-01 18:40:45,675 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_3924.pt ...
+2022-01-01 18:40:45,841 [INFO] root - Training epoch: 25, LR: [0.0006034647297788967] 
+2022-01-01 18:41:19,837 [INFO] root - Epoch 25 - It. 3939: loss = 0.264
+2022-01-01 18:42:03,559 [INFO] root - Epoch 25 - It. 3959: loss = 0.263
+2022-01-01 18:42:47,768 [INFO] root - Epoch 25 - It. 3979: loss = 0.281
+2022-01-01 18:43:30,996 [INFO] root - Epoch 25 - It. 3999: loss = 0.268
+2022-01-01 18:44:14,997 [INFO] root - Epoch 25 - It. 4019: loss = 0.260
+2022-01-01 18:44:59,012 [INFO] root - Epoch 25 - It. 4039: loss = 0.275
+2022-01-01 18:45:43,053 [INFO] root - Epoch 25 - It. 4059: loss = 0.263
+2022-01-01 18:46:25,757 [INFO] root - Epoch 25 - It. 4079: loss = 0.276
+2022-01-01 18:46:30,133 [INFO] root - Starting the validation
+2022-01-01 18:47:12,726 [INFO] root - VALIDATION -It. 4081: total loss: 0.305.
+2022-01-01 18:47:12,727 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_4081.pt ...
+2022-01-01 18:47:12,896 [INFO] root - Training epoch: 26, LR: [0.0005913954351833187] 
+2022-01-01 18:47:54,035 [INFO] root - Epoch 26 - It. 4099: loss = 0.249
+2022-01-01 18:48:37,752 [INFO] root - Epoch 26 - It. 4119: loss = 0.250
+2022-01-01 18:49:21,427 [INFO] root - Epoch 26 - It. 4139: loss = 0.263
+2022-01-01 18:50:05,147 [INFO] root - Epoch 26 - It. 4159: loss = 0.282
+2022-01-01 18:50:48,003 [INFO] root - Epoch 26 - It. 4179: loss = 0.270
+2022-01-01 18:51:31,957 [INFO] root - Epoch 26 - It. 4199: loss = 0.270
+2022-01-01 18:52:16,113 [INFO] root - Epoch 26 - It. 4219: loss = 0.255
+2022-01-01 18:52:57,993 [INFO] root - Starting the validation
+2022-01-01 18:53:40,420 [INFO] root - VALIDATION -It. 4238: total loss: 0.304.
+2022-01-01 18:53:40,422 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_4238.pt ...
+2022-01-01 18:53:40,586 [INFO] root - Training epoch: 27, LR: [0.0005795675264796523] 
+2022-01-01 18:53:43,543 [INFO] root - Epoch 27 - It. 4239: loss = 0.266
+2022-01-01 18:54:26,773 [INFO] root - Epoch 27 - It. 4259: loss = 0.252
+2022-01-01 18:55:10,487 [INFO] root - Epoch 27 - It. 4279: loss = 0.273
+2022-01-01 18:55:53,945 [INFO] root - Epoch 27 - It. 4299: loss = 0.248
+2022-01-01 18:56:37,830 [INFO] root - Epoch 27 - It. 4319: loss = 0.255
+2022-01-01 18:57:22,216 [INFO] root - Epoch 27 - It. 4339: loss = 0.252
+2022-01-01 18:58:05,734 [INFO] root - Epoch 27 - It. 4359: loss = 0.240
+2022-01-01 18:58:49,287 [INFO] root - Epoch 27 - It. 4379: loss = 0.260
+2022-01-01 18:59:24,380 [INFO] root - Starting the validation
+2022-01-01 19:00:06,762 [INFO] root - VALIDATION -It. 4395: total loss: 0.309.
+2022-01-01 19:00:06,764 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_4395.pt ...
+2022-01-01 19:00:06,934 [INFO] root - Training epoch: 28, LR: [0.0005679761759500593] 
+2022-01-01 19:00:16,395 [INFO] root - Epoch 28 - It. 4399: loss = 0.271
+2022-01-01 19:01:00,999 [INFO] root - Epoch 28 - It. 4419: loss = 0.245
+2022-01-01 19:01:45,358 [INFO] root - Epoch 28 - It. 4439: loss = 0.262
+2022-01-01 19:02:29,052 [INFO] root - Epoch 28 - It. 4459: loss = 0.266
+2022-01-01 19:03:13,264 [INFO] root - Epoch 28 - It. 4479: loss = 0.267
+2022-01-01 19:03:57,006 [INFO] root - Epoch 28 - It. 4499: loss = 0.255
+2022-01-01 19:04:40,534 [INFO] root - Epoch 28 - It. 4519: loss = 0.273
+2022-01-01 19:05:23,608 [INFO] root - Epoch 28 - It. 4539: loss = 0.243
+2022-01-01 19:05:52,040 [INFO] root - Starting the validation
+2022-01-01 19:06:34,373 [INFO] root - VALIDATION -It. 4552: total loss: 0.317.
+2022-01-01 19:06:34,374 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_4552.pt ...
+2022-01-01 19:06:34,543 [INFO] root - Training epoch: 29, LR: [0.0005566166524310581] 
+2022-01-01 19:06:50,603 [INFO] root - Epoch 29 - It. 4559: loss = 0.263
+2022-01-01 19:07:34,074 [INFO] root - Epoch 29 - It. 4579: loss = 0.259
+2022-01-01 19:08:17,832 [INFO] root - Epoch 29 - It. 4599: loss = 0.254
+2022-01-01 19:09:01,713 [INFO] root - Epoch 29 - It. 4619: loss = 0.260
+2022-01-01 19:09:44,808 [INFO] root - Epoch 29 - It. 4639: loss = 0.234
+2022-01-01 19:10:28,965 [INFO] root - Epoch 29 - It. 4659: loss = 0.246
+2022-01-01 19:11:12,992 [INFO] root - Epoch 29 - It. 4679: loss = 0.249
+2022-01-01 19:11:57,251 [INFO] root - Epoch 29 - It. 4699: loss = 0.256
+2022-01-01 19:12:19,328 [INFO] root - Starting the validation
+2022-01-01 19:13:02,167 [INFO] root - VALIDATION -It. 4709: total loss: 0.304.
+2022-01-01 19:13:02,169 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_4709.pt ...
+2022-01-01 19:13:02,335 [INFO] root - Training epoch: 30, LR: [0.0005454843193824369] 
+2022-01-01 19:13:25,445 [INFO] root - Epoch 30 - It. 4719: loss = 0.241
+2022-01-01 19:14:08,119 [INFO] root - Epoch 30 - It. 4739: loss = 0.260
+2022-01-01 19:14:51,413 [INFO] root - Epoch 30 - It. 4759: loss = 0.263
+2022-01-01 19:15:34,902 [INFO] root - Epoch 30 - It. 4779: loss = 0.252
+2022-01-01 19:16:18,765 [INFO] root - Epoch 30 - It. 4799: loss = 0.234
+2022-01-01 19:17:02,752 [INFO] root - Epoch 30 - It. 4819: loss = 0.250
+2022-01-01 19:17:46,523 [INFO] root - Epoch 30 - It. 4839: loss = 0.233
+2022-01-01 19:18:30,863 [INFO] root - Epoch 30 - It. 4859: loss = 0.240
+2022-01-01 19:18:46,128 [INFO] root - Starting the validation
+2022-01-01 19:19:28,876 [INFO] root - VALIDATION -It. 4866: total loss: 0.308.
+2022-01-01 19:19:28,878 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_4866.pt ...
+2022-01-01 19:19:29,040 [INFO] root - Training epoch: 31, LR: [0.0005345746329947881] 
+2022-01-01 19:19:58,881 [INFO] root - Epoch 31 - It. 4879: loss = 0.249
+2022-01-01 19:20:42,951 [INFO] root - Epoch 31 - It. 4899: loss = 0.231
+2022-01-01 19:21:26,644 [INFO] root - Epoch 31 - It. 4919: loss = 0.260
+2022-01-01 19:22:10,306 [INFO] root - Epoch 31 - It. 4939: loss = 0.252
+2022-01-01 19:22:53,940 [INFO] root - Epoch 31 - It. 4959: loss = 0.256
+2022-01-01 19:23:38,081 [INFO] root - Epoch 31 - It. 4979: loss = 0.241
+2022-01-01 19:24:22,309 [INFO] root - Epoch 31 - It. 4999: loss = 0.248
+2022-01-01 19:25:06,012 [INFO] root - Epoch 31 - It. 5019: loss = 0.243
+2022-01-01 19:25:14,867 [INFO] root - Starting the validation
+2022-01-01 19:25:57,882 [INFO] root - VALIDATION -It. 5023: total loss: 0.318.
+2022-01-01 19:25:57,884 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_5023.pt ...
+2022-01-01 19:25:58,050 [INFO] root - Training epoch: 32, LR: [0.0005238831403348923] 
+2022-01-01 19:26:33,753 [INFO] root - Epoch 32 - It. 5039: loss = 0.232
+2022-01-01 19:27:17,448 [INFO] root - Epoch 32 - It. 5059: loss = 0.225
+2022-01-01 19:28:02,264 [INFO] root - Epoch 32 - It. 5079: loss = 0.242
+2022-01-01 19:28:45,693 [INFO] root - Epoch 32 - It. 5099: loss = 0.248
+2022-01-01 19:29:29,009 [INFO] root - Epoch 32 - It. 5119: loss = 0.237
+2022-01-01 19:30:13,195 [INFO] root - Epoch 32 - It. 5139: loss = 0.252
+2022-01-01 19:30:56,615 [INFO] root - Epoch 32 - It. 5159: loss = 0.255
+2022-01-01 19:31:40,756 [INFO] root - Epoch 32 - It. 5179: loss = 0.237
+2022-01-01 19:31:42,909 [INFO] root - Starting the validation
+2022-01-01 19:32:25,550 [INFO] root - VALIDATION -It. 5180: total loss: 0.318.
+2022-01-01 19:32:25,552 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_5180.pt ...
+2022-01-01 19:32:25,723 [INFO] root - Training epoch: 33, LR: [0.0005134054775281945] 
+2022-01-01 19:33:08,552 [INFO] root - Epoch 33 - It. 5199: loss = 0.233
+2022-01-01 19:33:52,559 [INFO] root - Epoch 33 - It. 5219: loss = 0.237
+2022-01-01 19:34:36,673 [INFO] root - Epoch 33 - It. 5239: loss = 0.241
+2022-01-01 19:35:20,117 [INFO] root - Epoch 33 - It. 5259: loss = 0.241
+2022-01-01 19:36:04,370 [INFO] root - Epoch 33 - It. 5279: loss = 0.238
+2022-01-01 19:36:48,120 [INFO] root - Epoch 33 - It. 5299: loss = 0.244
+2022-01-01 19:37:31,828 [INFO] root - Epoch 33 - It. 5319: loss = 0.244
+2022-01-01 19:38:11,695 [INFO] root - Starting the validation
+2022-01-01 19:38:54,046 [INFO] root - VALIDATION -It. 5337: total loss: 0.317.
+2022-01-01 19:38:54,048 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_5337.pt ...
+2022-01-01 19:38:54,207 [INFO] root - Training epoch: 34, LR: [0.0005031373679776305] 
+2022-01-01 19:38:59,707 [INFO] root - Epoch 34 - It. 5339: loss = 0.244
+2022-01-01 19:39:43,775 [INFO] root - Epoch 34 - It. 5359: loss = 0.253
+2022-01-01 19:40:27,788 [INFO] root - Epoch 34 - It. 5379: loss = 0.243
+2022-01-01 19:41:11,633 [INFO] root - Epoch 34 - It. 5399: loss = 0.230
+2022-01-01 19:41:55,350 [INFO] root - Epoch 34 - It. 5419: loss = 0.236
+2022-01-01 19:42:38,879 [INFO] root - Epoch 34 - It. 5439: loss = 0.237
+2022-01-01 19:43:23,006 [INFO] root - Epoch 34 - It. 5459: loss = 0.232
+2022-01-01 19:44:06,629 [INFO] root - Epoch 34 - It. 5479: loss = 0.224
+2022-01-01 19:44:39,756 [INFO] root - Starting the validation
+2022-01-01 19:45:21,946 [INFO] root - VALIDATION -It. 5494: total loss: 0.296.
+2022-01-01 19:45:21,948 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_5494.pt ...
+2022-01-01 19:45:22,113 [INFO] root - Training epoch: 35, LR: [0.0004930746206180779] 
+2022-01-01 19:45:34,342 [INFO] root - Epoch 35 - It. 5499: loss = 0.230
+2022-01-01 19:46:18,285 [INFO] root - Epoch 35 - It. 5519: loss = 0.229
+2022-01-01 19:47:02,056 [INFO] root - Epoch 35 - It. 5539: loss = 0.235
+2022-01-01 19:47:45,621 [INFO] root - Epoch 35 - It. 5559: loss = 0.231
+2022-01-01 19:48:29,033 [INFO] root - Epoch 35 - It. 5579: loss = 0.243
+2022-01-01 19:49:12,646 [INFO] root - Epoch 35 - It. 5599: loss = 0.227
+2022-01-01 19:49:55,596 [INFO] root - Epoch 35 - It. 5619: loss = 0.224
+2022-01-01 19:50:38,516 [INFO] root - Epoch 35 - It. 5639: loss = 0.249
+2022-01-01 19:51:04,065 [INFO] root - Starting the validation
+2022-01-01 19:51:46,105 [INFO] root - VALIDATION -It. 5651: total loss: 0.298.
+2022-01-01 19:51:46,107 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_5651.pt ...
+2022-01-01 19:51:46,270 [INFO] root - Training epoch: 36, LR: [0.00048321312820571636] 
+2022-01-01 19:52:04,581 [INFO] root - Epoch 36 - It. 5659: loss = 0.237
+2022-01-01 19:52:47,949 [INFO] root - Epoch 36 - It. 5679: loss = 0.223
+2022-01-01 19:53:31,221 [INFO] root - Epoch 36 - It. 5699: loss = 0.238
+2022-01-01 19:54:14,666 [INFO] root - Epoch 36 - It. 5719: loss = 0.233
+2022-01-01 19:54:58,408 [INFO] root - Epoch 36 - It. 5739: loss = 0.235
+2022-01-01 19:55:42,221 [INFO] root - Epoch 36 - It. 5759: loss = 0.220
+2022-01-01 19:56:26,336 [INFO] root - Epoch 36 - It. 5779: loss = 0.217
+2022-01-01 19:57:10,229 [INFO] root - Epoch 36 - It. 5799: loss = 0.233
+2022-01-01 19:57:30,333 [INFO] root - Starting the validation
+2022-01-01 19:58:12,813 [INFO] root - VALIDATION -It. 5808: total loss: 0.300.
+2022-01-01 19:58:12,815 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_5808.pt ...
+2022-01-01 19:58:12,981 [INFO] root - Training epoch: 37, LR: [0.00047354886564160203] 
+2022-01-01 19:58:38,659 [INFO] root - Epoch 37 - It. 5819: loss = 0.214
+2022-01-01 19:59:21,671 [INFO] root - Epoch 37 - It. 5839: loss = 0.227
+2022-01-01 20:00:04,674 [INFO] root - Epoch 37 - It. 5859: loss = 0.230
+2022-01-01 20:00:48,741 [INFO] root - Epoch 37 - It. 5879: loss = 0.220
+2022-01-01 20:01:33,289 [INFO] root - Epoch 37 - It. 5899: loss = 0.240
+2022-01-01 20:02:16,444 [INFO] root - Epoch 37 - It. 5919: loss = 0.245
+2022-01-01 20:02:59,950 [INFO] root - Epoch 37 - It. 5939: loss = 0.233
+2022-01-01 20:03:44,317 [INFO] root - Epoch 37 - It. 5959: loss = 0.232
+2022-01-01 20:03:57,690 [INFO] root - Starting the validation
+2022-01-01 20:04:40,090 [INFO] root - VALIDATION -It. 5965: total loss: 0.312.
+2022-01-01 20:04:40,091 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_5965.pt ...
+2022-01-01 20:04:40,256 [INFO] root - Training epoch: 38, LR: [0.00046407788832877] 
+2022-01-01 20:05:12,091 [INFO] root - Epoch 38 - It. 5979: loss = 0.231
+2022-01-01 20:05:56,095 [INFO] root - Epoch 38 - It. 5999: loss = 0.229
+2022-01-01 20:06:39,902 [INFO] root - Epoch 38 - It. 6019: loss = 0.225
+2022-01-01 20:07:24,462 [INFO] root - Epoch 38 - It. 6039: loss = 0.217
+2022-01-01 20:08:07,944 [INFO] root - Epoch 38 - It. 6059: loss = 0.225
+2022-01-01 20:08:52,394 [INFO] root - Epoch 38 - It. 6079: loss = 0.230
+2022-01-01 20:09:35,233 [INFO] root - Epoch 38 - It. 6099: loss = 0.239
+2022-01-01 20:10:19,429 [INFO] root - Epoch 38 - It. 6119: loss = 0.226
+2022-01-01 20:10:26,197 [INFO] root - Starting the validation
+2022-01-01 20:11:09,008 [INFO] root - VALIDATION -It. 6122: total loss: 0.290.
+2022-01-01 20:11:09,008 [INFO] root - New best model (loss: 0.2902)
+2022-01-01 20:11:09,009 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_best.pt ...
+2022-01-01 20:11:09,485 [INFO] root - Training epoch: 39, LR: [0.0004547963305621946] 
+2022-01-01 20:11:48,071 [INFO] root - Epoch 39 - It. 6139: loss = 0.215
+2022-01-01 20:12:32,565 [INFO] root - Epoch 39 - It. 6159: loss = 0.228
+2022-01-01 20:13:16,726 [INFO] root - Epoch 39 - It. 6179: loss = 0.208
+2022-01-01 20:14:01,070 [INFO] root - Epoch 39 - It. 6199: loss = 0.225
+2022-01-01 20:14:44,274 [INFO] root - Epoch 39 - It. 6219: loss = 0.222
+2022-01-01 20:15:27,662 [INFO] root - Epoch 39 - It. 6239: loss = 0.238
+2022-01-01 20:16:11,638 [INFO] root - Epoch 39 - It. 6259: loss = 0.230
+2022-01-01 20:16:54,861 [INFO] root - Epoch 39 - It. 6279: loss = 0.208
+2022-01-01 20:16:54,865 [INFO] root - Starting the validation
+2022-01-01 20:17:37,936 [INFO] root - VALIDATION -It. 6279: total loss: 0.297.
+2022-01-01 20:17:37,938 [INFO] root - Saving checkpoint: ./logs/logs_SemanticKITTI_ME/22_01_01-16_00_09_562873__Method_ME__Flow___Ego___Sem___Rem_Ground___VoxSize_0.1__Pts_8192/model_6279.pt ...
+2022-01-01 20:17:38,108 [INFO] root - Training completed after 39 Epochs (156 it) with best val metric (total_loss)=0.29015132784843445
