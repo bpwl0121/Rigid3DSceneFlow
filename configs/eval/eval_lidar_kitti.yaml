@@ -6,7 +6,7 @@ method:
   clustering: True # Use foreground clustering head
   loop_ego: False
   loop_flow: False
-  umeyama: True
+  umeyama: False
 
 misc:
   run_mode: test # Mode to run the network in
