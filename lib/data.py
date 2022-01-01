@@ -5,7 +5,7 @@ import logging
 import numpy as np
 import torch.utils.data as data
 import MinkowskiEngine as ME
-
+import lib.config as config
 
 def to_tensor(x):
     if isinstance(x, torch.Tensor):
