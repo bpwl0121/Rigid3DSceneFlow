@@ -335,7 +335,7 @@ class MELidarDataset(data.Dataset):
     def __len__(self):
         return len(self.files)
 
-    def reset_seed(self,seed=41):
+    def reset_seed(self,seed=config.RANDOM_SEED):
         logging.info('Resetting the data loader seed to {}'.format(seed))
         self.randng.seed(seed)
 
