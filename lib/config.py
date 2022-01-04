@@ -4,7 +4,7 @@ import torch
 import yaml
 import torch.optim as optim
 
-RANDOM_SEED = 42
+RANDOM_SEED = 41
 
 model_dict = {
      'ME': MinkowskiFlow,
