@@ -41,6 +41,10 @@ class TrainLoss(nn.Module):
         
         elif args['loss']['background_loss'] == 'focal':
             self.seg_criterion = FocalLoss(gamma=2.0, alpha=0.25)
+        elif args['loss']['background_loss'] == 'dice':
+            self.seg_criterion = DiceLoss()
+        elif args['loss']['background_loss'] == 'dice_ce':
+            self.seg_criterion = DiceCELoss()
 
         else:
             # ignore_index=-1: https://stackoverflow.com/questions/69346001/pytorch-nllloss-ignore-index-default-value
