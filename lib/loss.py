@@ -340,3 +340,34 @@ class FocalLoss(nn.Module):
         pt = torch.exp(-ce_loss)
         focal_loss = (self.alpha * (1-pt)**self.gamma * ce_loss).mean()
         return focal_loss
+
+class DiceLoss(nn.Module):
+    def __init__(self, weight=None, size_average=True):
+        super(DiceLoss, self).__init__()
+
+    def forward(self, inputs, targets, smooth=1):
+
+        inputs = inputs.view(-1)
+        targets = targets.view(-1)
+        
+        intersection1 = (inputs[0] * targets).sum()                            
+        intersection2 = (inputs[1] * targets).sum()                            
+        dice1 = (2.*intersection1 + smooth)/(inputs.sum() + targets.sum() + smooth)  
+        dice2 = (2.*intersection2 + smooth)/(inputs.sum() + targets.sum() + smooth)
+
+        dice = torch.mean(dice1.add(dice2))
+        
+        return 1 - dice
+
+class DiceBCELoss(nn.Module):
+    def __init__(self, weight=None, size_average=True):
+        super(DiceBCELoss, self).__init__()
+        self.dice = DiceLoss()
+
+    def forward(self, inputs, targets, smooth=1):
+                            
+        dice_loss = self.dice(inputs, targets)
+        ce_loss = torch.nn.functional.cross_entropy(inputs, targets, reduction='none',ignore_index=-1)
+        Dice_CE = ce_loss + dice_loss
+        
+        return Dice_CE
