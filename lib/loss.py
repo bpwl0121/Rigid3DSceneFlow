@@ -342,29 +342,35 @@ class FocalLoss(nn.Module):
         return focal_loss
 
 class DiceLoss(nn.Module):
-    def __init__(self, weight=None, size_average=True):
+    def __init__(self, weight=None, size_average=True, delta = 0.5, smooth = 0.000001):
         super(DiceLoss, self).__init__()
+        self.delta = delta
+        self.smooth = smooth
 
-    def forward(self, inputs, targets, smooth=1):
+    def forward(self, inputs, targets):
 
         inputs = inputs.view(-1)
         targets = targets.view(-1)
         
-        intersection1 = (inputs[0] * targets).sum()                            
-        intersection2 = (inputs[1] * targets).sum()                            
-        dice1 = (2.*intersection1 + smooth)/(inputs.sum() + targets.sum() + smooth)  
-        dice2 = (2.*intersection2 + smooth)/(inputs.sum() + targets.sum() + smooth)
+        tp_X = torch.sum(inputs[0] * targets)                         
+        tp_Y = torch.sum(inputs[1] * targets)
+        fn_X = torch.sum((1- inputs[0]), targets)                 
+        fn_Y = torch.sum((1- inputs[1]), targets)
+        fp_X = torch.sum(inputs[0], 1- targets)               
+        fp_Y = torch.sum(inputs[1], 1- targets)               
+        diceX = (tp_X+self.smooth)/(tp_X+ self.delta*fn_X+self.smooth+(1-self.delta)*fp_X)
+        diceY = (tp_Y+self.smooth)/(tp_Y+ self.delta*fn_Y+self.smooth+(1-self.delta)*fp_Y)
 
-        dice = torch.mean(dice1.add(dice2))
+        dice = (1 - torch.add(diceX, diceY)).mean()
         
-        return 1 - dice
+        return dice
 
-class DiceBCELoss(nn.Module):
+class DiceCELoss(nn.Module):
     def __init__(self, weight=None, size_average=True):
-        super(DiceBCELoss, self).__init__()
+        super(DiceCELoss, self).__init__()
         self.dice = DiceLoss()
 
-    def forward(self, inputs, targets, smooth=1):
+    def forward(self, inputs, targets):
                             
         dice_loss = self.dice(inputs, targets)
         ce_loss = torch.nn.functional.cross_entropy(inputs, targets, reduction='none',ignore_index=-1)
