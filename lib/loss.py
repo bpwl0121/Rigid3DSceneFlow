@@ -41,6 +41,10 @@ class TrainLoss(nn.Module):
         
         elif args['loss']['background_loss'] == 'focal':
             self.seg_criterion = FocalLoss(gamma=2.0, alpha=0.25)
+        elif args['loss']['background_loss'] == 'dice':
+            self.seg_criterion = DiceLoss()
+        elif args['loss']['background_loss'] == 'dice_ce':
+            self.seg_criterion = DiceCELoss()
 
         else:
             # ignore_index=-1: https://stackoverflow.com/questions/69346001/pytorch-nllloss-ignore-index-default-value
@@ -340,3 +344,40 @@ class FocalLoss(nn.Module):
         pt = torch.exp(-ce_loss)
         focal_loss = (self.alpha * (1-pt)**self.gamma * ce_loss).mean()
         return focal_loss
+
+class DiceLoss(nn.Module):
+    def __init__(self, weight=None, size_average=True, delta = 0.5, smooth = 0.000001):
+        super(DiceLoss, self).__init__()
+        self.delta = delta
+        self.smooth = smooth
+
+    def forward(self, inputs, targets):
+
+        inputs = inputs.view(-1)
+        targets = targets.view(-1)
+        
+        tp_X = torch.sum(inputs[0] * targets)                         
+        tp_Y = torch.sum(inputs[1] * targets)
+        fn_X = torch.sum((1- inputs[0]), targets)                 
+        fn_Y = torch.sum((1- inputs[1]), targets)
+        fp_X = torch.sum(inputs[0], 1- targets)               
+        fp_Y = torch.sum(inputs[1], 1- targets)               
+        diceX = (tp_X+self.smooth)/(tp_X+ self.delta*fn_X+self.smooth+(1-self.delta)*fp_X)
+        diceY = (tp_Y+self.smooth)/(tp_Y+ self.delta*fn_Y+self.smooth+(1-self.delta)*fp_Y)
+
+        dice = (1 - torch.add(diceX, diceY)).mean()
+        
+        return dice
+
+class DiceCELoss(nn.Module):
+    def __init__(self, weight=None, size_average=True):
+        super(DiceCELoss, self).__init__()
+        self.dice = DiceLoss()
+
+    def forward(self, inputs, targets):
+                            
+        dice_loss = self.dice(inputs, targets)
+        ce_loss = torch.nn.functional.cross_entropy(inputs, targets, reduction='none',ignore_index=-1)
+        Dice_CE = ce_loss + dice_loss
+        
+        return Dice_CE
