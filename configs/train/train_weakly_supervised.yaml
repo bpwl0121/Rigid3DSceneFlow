@@ -37,6 +37,7 @@ network:
   
 loss: 
   background_loss: True # Compute background loss
+  dice_ce_weight : 0.6
   flow_loss: False # Compute flow loss
   ego_loss: True # Compute ego-motion loss
   foreground_loss: True # Compute foreground loss

@@ -44,7 +44,7 @@ class TrainLoss(nn.Module):
         elif args['loss']['background_loss'] == 'dice':
             self.seg_criterion = DiceLoss()
         elif args['loss']['background_loss'] == 'dice_ce':
-            self.seg_criterion = DiceCELoss()
+            self.seg_criterion = DiceCELoss(ce_weight = args['loss']['dice_ce_weight'])
 
         else:
             # ignore_index=-1: https://stackoverflow.com/questions/69346001/pytorch-nllloss-ignore-index-default-value
@@ -356,12 +356,12 @@ class DiceLoss(nn.Module):
         inputs = inputs.view(-1)
         targets = targets.view(-1)
         
-        tp_X = torch.sum(inputs[0] * targets)                         
-        tp_Y = torch.sum(inputs[1] * targets)
-        fn_X = torch.sum((1- inputs[0]), targets)                 
-        fn_Y = torch.sum((1- inputs[1]), targets)
-        fp_X = torch.sum(inputs[0], 1- targets)               
-        fp_Y = torch.sum(inputs[1], 1- targets)               
+        tp_X = (inputs[0] * targets).sum()                         
+        tp_Y = (inputs[1] * targets).sum()    
+        fn_X = ((1- inputs[0])* targets).sum()                     
+        fn_Y = ((1- inputs[1])* targets).sum()    
+        fp_X = (inputs[0]* 1- targets).sum()                   
+        fp_Y = (inputs[1]* 1- targets).sum()                   
         diceX = (tp_X+self.smooth)/(tp_X+ self.delta*fn_X+self.smooth+(1-self.delta)*fp_X)
         diceY = (tp_Y+self.smooth)/(tp_Y+ self.delta*fn_Y+self.smooth+(1-self.delta)*fp_Y)
 
@@ -370,14 +370,15 @@ class DiceLoss(nn.Module):
         return dice
 
 class DiceCELoss(nn.Module):
-    def __init__(self, weight=None, size_average=True):
+    def __init__(self, weight=0.5, size_average=True):
         super(DiceCELoss, self).__init__()
         self.dice = DiceLoss()
+        self.weight = weight
 
     def forward(self, inputs, targets):
                             
         dice_loss = self.dice(inputs, targets)
-        ce_loss = torch.nn.functional.cross_entropy(inputs, targets, reduction='none',ignore_index=-1)
-        Dice_CE = ce_loss + dice_loss
+        ce_loss = torch.nn.functional.cross_entropy(inputs, targets, reduction='none', ignore_index=-1)
+        Dice_CE = self.weight*ce_loss + (1- self.weight)*dice_loss
         
         return Dice_CE
