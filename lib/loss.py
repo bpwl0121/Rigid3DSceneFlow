@@ -139,6 +139,13 @@ class TrainLoss(nn.Module):
                 # no correspondence for point from source to target at background, so target is not used
                 pc_s_gt_temp = transform_point_cloud(p_t_temp[mask_temp,1:4], gt_data['R_ego'][batch_idx,:,:].T, -gt_data['t_ego'][batch_idx,:,:])
                 pc_s_est_temp = transform_point_cloud(p_t_temp[mask_temp,1:4], inferred_values['R_est_t'][batch_idx,:,:], inferred_values['t_est_t'][batch_idx,:,:])
+
+                #######################################
+                if self.args['method']['background_flow_loop']:
+                    background_flow = inferred_values['refined_flow_t'][prev_idx: prev_idx + gt_data['len_batch'][batch_idx][1],:]
+
+                    pc_s_est_temp=pc_s_est_temp*0.5+0.5*(p_t_temp[mask_temp,1:4]+background_flow[mask_temp,:])
+                #########################################
                 
                 pc_s_gt.append(pc_s_gt_temp.squeeze(0))
                 pc_s_est.append(pc_s_est_temp.squeeze(0))
