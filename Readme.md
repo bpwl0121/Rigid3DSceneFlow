@@ -1,8 +1,8 @@
 # TUM ADL4CV project
-Work was completed by Rafid Abyaad and Wenliang Peng and supervised by Yujin Chen at TUM.   
+Work was completed by [Rafid Abyaad](https://github.com/abyaadrafid/) and [Wenliang Peng](https://github.com/bpwl0121/) and supervised by [Yujin Chen](https://terencecyj.github.io//) at [TUM](https://www.tum.de/).   
 Many thanks to the authors of the original article for open sourcing the code and sharing their outstanding work!  
 
-The goal of this project is to improve the original model. More details and results are available in `./docs_project`. The environment installation and script launch are as in the original.
+The goal of this project is to improve the original model. More details and results are available in `./docs_project`. The environment installation and script launch are as the original.
 # Weakly Supervised Learning of Rigid 3D Scene Flow 
 This repository provides code and data to train and evaluate a weakly supervised method for rigid 3D scene flow estimation. It represents the official implementation of the paper:
 

@@ -8,7 +8,7 @@ method:
   loop_flow: True
   umeyama: False
   background_flow: True
-  background_flow_loop: True
+  background_flow_loop: False
 
 misc:
   run_mode: train # Mode to run the network in
